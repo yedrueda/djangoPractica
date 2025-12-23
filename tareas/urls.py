@@ -4,4 +4,5 @@ from . import views
 # OJO: Debe llamarse 'urlpatterns' (plural) y ser una lista []
 urlpatterns = [
     path('', views.lista_tareas, name='lista_tareas'),
+    path('crear/', views.crear_tarea, name='crear_tarea'),
 ]
