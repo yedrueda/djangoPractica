@@ -1,20 +1,18 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Crear Tarea</title>
-</head>
-<body>
-    <h1>Nueva Tarea</h1>
+{% extends 'tareas/base.html' %}
+
+{% block content %}
+    <h3 class="mb-3 text-secondary">Nueva Tarea</h3>
 
     <form method="POST">
         {% csrf_token %}
         
-        {{ form.as_p }}
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
 
-        <button type="submit">Guardar Tarea</button>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{% url 'lista_tareas' %}" class="btn btn-secondary me-md-2">Cancelar</a>
+            <button type="submit" class="btn btn-primary">💾 Guardar Tarea</button>
+        </div>
     </form>
-
-    <a href="{% url 'lista_tareas' %}">Cancelar y volver</a>
-</body>
-</html>
+{% endblock %}
