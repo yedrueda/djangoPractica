@@ -120,3 +120,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# ___ Configuracion del login ___
+
+# si no estas logueado, te redirige a esta url
+LOGIN_URL = 'login'
+# si te logueas, te redirige a esta url
+LOGIN_REDIRECT_URL = 'lista_tareas'
+# si te deslogueas, te redirige a esta url
+LOGOUT_REDIRECT_URL = 'login'
+

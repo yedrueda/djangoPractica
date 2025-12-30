@@ -1,13 +1,16 @@
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
 from .models import Tarea
 from .forms import TareaForm
 from django.shortcuts import render, redirect, get_object_or_404
 
+@login_required
 def lista_tareas(request):
     tareas = Tarea.objects.all()
     contexto = {'tareas': tareas}
     return render(request, 'tareas/lista_tareas.html', contexto)
 
+@login_required
 def crear_tarea(request):
     if request.method == 'POST':
         # si el usuario envio datos , los cargamos al formulario 
@@ -22,12 +25,14 @@ def crear_tarea(request):
     
     return render(request, 'tareas/crear_tarea.html', {'form': form})
 
+@login_required
 def eliminar_tarea(request, tarea_id):
     #busca las tareas por id, si no existe devuelve error 404
     tarea = get_object_or_404(Tarea, id=tarea_id)
     tarea.delete()
     return redirect('lista_tareas')
 
+@login_required
 def completar_tarea(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id)
     tarea.completada = True # cambiamos el estado de la tarea
