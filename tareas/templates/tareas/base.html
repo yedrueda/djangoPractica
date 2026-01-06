@@ -1,38 +1,69 @@
-<!DOCTYPE html>
+{% load static %} <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor CDI El Llanito</title>
+    <title>SIGE-CDI El Llanito</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body class="bg-light">
+<body>
 
-    <nav class="navbar navbar-dark bg-primary mb-4 shadow">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'lista_tareas' %}">
-                🏥 CDI El Llanito
-            </a>
+    <div class="container-fluid">
+        <div class="row">
+            
+            <div class="col-md-2 sidebar p-0 d-flex flex-column border-end">
+                <div class="sidebar-brand d-flex align-items-center">
+                    <i class="bi bi-activity text-success me-2" style="font-size: 1.5rem;"></i>
+                    <span>SIGE-CDI</span>
+                </div>
 
-            {% if user.is_authenticated %}
-                <div class="d-flex align-items-center text-white">
-                    <span class="me-3">👤 {{ user.username }}</span>
-                    
+                {% if user.is_authenticated %}
+                <div class="px-4 pb-4 mb-2 d-flex align-items-center border-bottom border-light">
+                    <div style="width:40px; height:40px; background-color:#e2e8f0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#64748b;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="mb-0 small fw-bold text-dark">{{ user.username }}</h6>
+                        <small class="text-success" style="font-size:0.7rem;">● En Línea</small>
+                    </div>
+                </div>
+                {% endif %}
+
+                <nav class="mt-2 flex-grow-1">
+                    <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+    <i class="bi bi-grid-1x2-fill"></i> Panel General
+</a>
+                    <a href="{% url 'lista_pacientes' %}" class="{% if 'gestion' in request.path %}active{% endif %}">
+                        <i class="bi bi-heart-pulse-fill"></i> Salud & Pacientes
+                    </a>
+                    <a href="#">
+                        <i class="bi bi-people-fill"></i> Talento Humano
+                    </a>
+                    <a href="#">
+                        <i class="bi bi-pc-display"></i> Inventario
+                    </a>
+                </nav>
+
+                <div class="p-3">
                     <form action="{% url 'logout' %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-light btn-sm">🚪 Cerrar Sesión</button>
+                        <button type="submit" class="btn btn-outline-danger w-100 d-flex justify-content-center align-items-center" style="border-radius:10px;">
+                            <i class="bi bi-box-arrow-left me-2"></i> Salir
+                        </button>
                     </form>
                 </div>
-            {% endif %}
-        </div>
-    </nav>
+            </div>
 
-    <div class="container">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
+            <div class="col-md-10 bg-light main-content">
                 {% block content %}
                 {% endblock %}
             </div>
+
         </div>
     </div>
 

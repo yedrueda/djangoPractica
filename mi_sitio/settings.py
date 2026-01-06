@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'gestion',
 ]
 
 MIDDLEWARE = [
@@ -121,12 +122,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+#Le decimos a django donde buscar los css globales 
+import os
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),]
 # ___ Configuracion del login ___
 
 # si no estas logueado, te redirige a esta url
 LOGIN_URL = 'login'
 # si te logueas, te redirige a esta url
-LOGIN_REDIRECT_URL = 'lista_tareas'
+LOGIN_REDIRECT_URL = 'dashboard'
 # si te deslogueas, te redirige a esta url
 LOGOUT_REDIRECT_URL = 'login'
 
