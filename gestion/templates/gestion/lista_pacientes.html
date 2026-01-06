@@ -46,7 +46,9 @@
                                     </div>
                                 </div>
                             </td>
+
                             <td class="fw-bold text-secondary">{{ paciente.cedula }}</td>
+
                             <td>
                                 {% if paciente.telefono %}
                                     <span class="text-dark">{{ paciente.telefono }}</span>
@@ -54,14 +56,22 @@
                                     <span class="text-muted small">--</span>
                                 {% endif %}
                             </td>
+
                             <td><span class="badge bg-success bg-opacity-10 text-success px-3">Activo</span></td>
+
                             <td class="text-end pe-4">
-                                <button class="btn btn-sm btn-light text-primary border me-1" title="Editar">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </button>
-                                <button class="btn btn-sm btn-light text-danger border" title="Historia Médica">
-                                    <i class="bi bi-file-medical"></i>
-                                </button>
+                                <div class="d-inline-flex gap-2">
+                                    <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-sm btn-light text-primary border" title="Editar Datos">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="{% url 'historia_clinica' paciente.id %}" class="btn btn-sm btn-light text-primary border" title="Ver Historia Médica">
+                                        <i class="bi bi-eye-fill"></i> </a>
+                                
+                                
+                                    <a href="{% url 'registrar_consulta' paciente.id %}" class="btn btn-sm btn-light text-danger border" title="Nueva Consulta">
+                                        <i class="bi bi-file-medical"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         {% empty %}

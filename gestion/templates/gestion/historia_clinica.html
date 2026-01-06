@@ -1,0 +1,98 @@
+{% extends 'tareas/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body text-center pt-5 pb-4">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                    {{ paciente.nombres|slice:":1" }}{{ paciente.apellidos|slice:":1" }}
+                </div>
+                <h4 class="fw-bold mb-0">{{ paciente.nombres }} {{ paciente.apellidos }}</h4>
+                <p class="text-muted">{{ paciente.cedula }}</p>
+                
+                <div class="d-flex justify-content-center gap-2 mt-3">
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-3">Activo</span>
+                    <span class="badge bg-light text-dark border px-3">Medicina General</span>
+                </div>
+            </div>
+            <div class="card-footer bg-white p-3">
+                <div class="small text-muted mb-2 fw-bold">CONTACTO</div>
+                <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-telephone me-3 text-primary"></i> 
+                    {{ paciente.telefono|default:"No registrado" }}
+                </div>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-geo-alt me-3 text-primary"></i> 
+                    {{ paciente.direccion|default:"Sin dirección" }}
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <a href="{% url 'registrar_consulta' paciente.id %}" class="btn btn-success shadow-sm py-2">
+                <i class="bi bi-plus-lg me-2"></i> Nueva Consulta
+            </a>
+            <a href="{% url 'lista_pacientes' %}" class="btn btn-outline-secondary py-2">
+                <i class="bi bi-arrow-left me-2"></i> Volver al Directorio
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h4 class="mb-4 fw-bold text-dark border-bottom pb-2">Historial Médico</h4>
+
+        {% for consulta in consultas %}
+            <div class="card mb-3 shadow-sm border-start border-4 border-primary">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <h6 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-calendar-event me-2"></i> {{ consulta.fecha|date:"d M Y" }}
+                            <small class="text-muted ms-2 fw-normal">{{ consulta.fecha|date:"h:i A" }}</small>
+                        </h6>
+                    </div>
+                    <span class="badge bg-light text-dark border">Dr. Admin</span>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">Motivo</small>
+                        <p class="fw-bold mb-0">{{ consulta.motivo }}</p>
+                    </div>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="p-2 bg-light rounded border">
+                                <small class="d-block text-muted text-uppercase" style="font-size: 0.65rem;">Tensión</small>
+                                <span class="fw-bold text-dark">{{ consulta.presion_arterial|default:"--" }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-2 bg-light rounded border">
+                                <small class="d-block text-muted text-uppercase" style="font-size: 0.65rem;">Temperatura</small>
+                                <span class="fw-bold text-dark">{{ consulta.temperatura|default:"--" }} °C</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">Diagnóstico</small>
+                        <p class="mb-0">{{ consulta.diagnostico }}</p>
+                    </div>
+
+                    {% if consulta.tratamiento %}
+                    <div class="p-3 bg-success bg-opacity-10 rounded border border-success border-opacity-25">
+                        <small class="text-success fw-bold text-uppercase d-block mb-1"><i class="bi bi-capsule me-1"></i> Tratamiento</small>
+                        <p class="mb-0 small text-dark">{{ consulta.tratamiento }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert alert-info text-center py-5">
+                <i class="bi bi-clipboard-pulse fs-1 d-block mb-3"></i>
+                <p>Este paciente aún no tiene consultas registradas.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

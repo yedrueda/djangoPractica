@@ -21,3 +21,26 @@ class Paciente(models.Model):
         verbose_name = "Paciente"
         verbose_name_plural = "Pacientes"
         ordering = ['apellidos'] # Ordenar alfabéticamente por defecto
+
+    # ... (tu modelo Paciente está arriba) ...
+
+class Consulta(models.Model):
+    # Relación: Si borras al paciente, se borran sus consultas (CASCADE)
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='consultas')
+    
+    fecha = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Atención")
+    motivo = models.CharField(max_length=200, verbose_name="Motivo de Consulta")
+    sintomas = models.TextField(verbose_name="Sintomatología")
+    diagnostico = models.TextField(verbose_name="Diagnóstico Médico")
+    tratamiento = models.TextField(verbose_name="Tratamiento Indicado")
+    
+    # Datos opcionales (signos vitales)
+    presion_arterial = models.CharField(max_length=20, blank=True, null=True)
+    temperatura = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True)
+    
+    def __str__(self):
+        return f"Consulta {self.paciente.nombres} - {self.fecha.strftime('%d/%m/%Y')}"
+
+    class Meta:
+        ordering = ['-fecha'] # Las más recientes primero
+    
