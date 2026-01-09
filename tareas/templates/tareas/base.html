@@ -41,7 +41,7 @@
                     <a href="{% url 'lista_pacientes' %}" class="{% if 'gestion' in request.path %}active{% endif %}">
                         <i class="bi bi-heart-pulse-fill"></i> Salud & Pacientes
                     </a>
-                    <a href="#">
+                    <a href="{% url 'lista_usuarios' %}" class="{% if 'usuarios' in request.path %}active{% endif %}">
                         <i class="bi bi-people-fill"></i> Talento Humano
                     </a>
                     <a href="#">

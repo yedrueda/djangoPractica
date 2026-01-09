@@ -13,4 +13,8 @@ urlpatterns = [
     # 3. Consultas e Historia
     path('pacientes/<int:paciente_id>/consulta/', views.registrar_consulta, name='registrar_consulta'),
     path('pacientes/<int:paciente_id>/historia/', views.historia_clinica, name='historia_clinica'),
+
+    # 4. gestion de usuarios 
+    path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
+    path('usuarios/nuevo/', views.crear_usuario, name='crear_usuario'),
 ]

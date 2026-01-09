@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Paciente
 from .forms import PacienteForm, ConsultaForm
+from django.contrib.auth.models import User, Group
+
 
 def es_admin(user):
     return user.groups.filter(name='Administrador').exists() or user.is_superuser
@@ -84,3 +86,35 @@ def editar_paciente(request, paciente_id):
         form = PacienteForm(instance=paciente)
 
     return render(request, 'gestion/editar_paciente.html', {'form': form, 'paciente': paciente})
+
+
+@login_required
+@user_passes_test(es_admin)
+def lista_usuarios(request):
+    usuarios = User.objects.all().prefetch_related('groups')
+    return render(request, 'gestion/usuarios_lista.html', {'usuarios': usuarios})
+
+@login_required
+@user_passes_test(es_admin)
+def crear_usuario(request):
+    grupos = Group.objects.all()
+    if request.method == 'POST':
+        # Capturamos datos del formulario manual
+        unombre = request.POST.get('username')
+        uclave = request.POST.get('password')
+        ugrupo = request.POST.get('grupo')
+        
+        # Crear el usuario
+        nuevo_u = User.objects.create_user(username=unombre, password=uclave)
+        nuevo_u.first_name = request.POST.get('first_name')
+        nuevo_u.last_name = request.POST.get('last_name')
+        
+        # Asignar grupo
+        if ugrupo:
+            grupo = Group.objects.get(name=ugrupo)
+            nuevo_u.groups.add(grupo)
+        
+        nuevo_u.save()
+        return redirect('lista_usuarios')
+        
+    return render(request, 'gestion/usuarios_crear.html', {'grupos': grupos})
