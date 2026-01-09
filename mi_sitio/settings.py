@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +27,7 @@ SECRET_KEY = 'django-insecure-ddcmgpgrcr5clm$c6@7@gy#uwo%ll$2%z7zvh-$&1m(6ama=9=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -135,3 +138,20 @@ LOGIN_REDIRECT_URL = 'dashboard'
 # si te deslogueas, te redirige a esta url
 LOGOUT_REDIRECT_URL = 'login'
 
+# --- CONFIGURACIÓN PARA RENDER (Producción) ---
+
+# 1. Base de Datos Híbrida
+# Si Render nos da una base de datos (DATABASE_URL), la usamos.
+# Si no (estamos en local), usamos la que ya tienes configurada arriba.
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    DATABASES = {
+        "default": dj_database_url.parse(database_url)
+    }
+
+# 2. Archivos Estáticos (CSS, JS, Imágenes)
+# Esto le dice a Django dónde reunir todos los archivos para servirlos
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Habilitar compresión y caché de WhiteNoise
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
