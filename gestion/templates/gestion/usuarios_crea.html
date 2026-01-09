@@ -1,0 +1,59 @@
+{% extends 'tareas/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-person-plus me-2"></i>Nuevo Funcionario</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">NOMBRES</label>
+                            <input type="text" name="first_name" class="form-control" placeholder="Ej: Maria" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">APELLIDOS</label>
+                            <input type="text" name="last_name" class="form-control" placeholder="Ej: Perez" required>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">NOMBRE DE USUARIO (LOGIN)</label>
+                            <input type="text" name="username" class="form-control" placeholder="Ej: mperez_cdi" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">CONTRASEÑA TEMPORAL</label>
+                            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">ROL DEL SISTEMA</label>
+                            <select name="grupo" class="form-select" required>
+                                <option value="" selected disabled>Seleccione un cargo...</option>
+                                {% for g in grupos %}
+                                    <option value="{{ g.name }}">{{ g.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text mt-2 small">
+                                <i class="bi bi-info-circle me-1"></i> El rol define qué módulos podrá ver el usuario.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                        <a href="{% url 'lista_usuarios' %}" class="btn btn-light border">Cancelar</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-lg me-2"></i> Crear Cuenta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
