@@ -44,3 +44,18 @@ class Consulta(models.Model):
     class Meta:
         ordering = ['-fecha'] # Las más recientes primero
     
+
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
+from django.contrib.auth.models import Group, Permission
+
+@receiver(post_migrate)
+def crear_grupos_permisos(sender, **kwargs):
+    if sender.name == 'gestion':
+        # 1. Crear Grupos
+        admin_group, _ = Group.objects.get_or_create(name='Administrador')
+        medico_group, _ = Group.objects.get_or_create(name='Médico')
+        recepcion_group, _ = Group.objects.get_or_create(name='Recepción')
+
+        # Aquí podríamos asignar permisos específicos a cada grupo en el futuro
+        print("Grupos de seguridad configurados correctamente")

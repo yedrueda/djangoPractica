@@ -61,12 +61,16 @@
 
                             <td class="text-end pe-4">
                                 <div class="d-inline-flex gap-2">
+    
+                                    {% if user.is_superuser or request.user.groups.all.0.name == 'Administrador' %}
                                     <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-sm btn-light text-primary border" title="Editar Datos">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
-                                    <a href="{% url 'historia_clinica' paciente.id %}" class="btn btn-sm btn-light text-primary border" title="Ver Historia Médica">
-                                        <i class="bi bi-eye-fill"></i> </a>
+                                    {% endif %}
                                 
+                                    <a href="{% url 'historia_clinica' paciente.id %}" class="btn btn-sm btn-light text-primary border" title="Ver Historia">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
                                 
                                     <a href="{% url 'registrar_consulta' paciente.id %}" class="btn btn-sm btn-light text-danger border" title="Nueva Consulta">
                                         <i class="bi bi-file-medical"></i>

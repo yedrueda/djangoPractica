@@ -1,7 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Paciente
 from .forms import PacienteForm, ConsultaForm
+
+def es_admin(user):
+    return user.groups.filter(name='Administrador').exists() or user.is_superuser
+
+def es_medico(user):
+    return user.groups.filter(name='Médico').exists() or es_admin(user)
 
 @login_required
 def lista_pacientes(request):
@@ -34,6 +40,7 @@ def dashboard(request):
     return render(request, 'gestion/home.html', contexto)
 
 @login_required
+@user_passes_test(es_medico)
 def registrar_consulta(request, paciente_id):
     # 1. Buscamos al paciente por su ID(si no existe ,error 404)
     paciente = get_object_or_404(Paciente, id=paciente_id)
@@ -62,6 +69,7 @@ def historia_clinica(request, paciente_id):
     return render(request, 'gestion/historia_clinica.html', {'paciente': paciente, 'consultas': consultas})
 
 @login_required
+@user_passes_test(es_admin)
 def editar_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
 
