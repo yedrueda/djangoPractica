@@ -118,3 +118,30 @@ def crear_usuario(request):
         return redirect('lista_usuarios')
         
     return render(request, 'gestion/usuarios_crear.html', {'grupos': grupos})
+
+@login_required
+@user_passes_test(es_admin)
+def editar_usuario(request, user_id):
+    usuario = get_object_or_404(User, id=user_id)
+    grupos = Group.objects.all()
+    
+    if request.method == 'POST':
+        usuario.first_name = request.POST.get('first_name')
+        usuario.last_name = request.POST.get('last_name')
+        usuario.username = request.POST.get('username')
+        
+        # Lógica de Activo/Retirado
+        estatus = request.POST.get('is_active')
+        usuario.is_active = True if estatus == '1' else False
+        
+        # Actualizar Grupo
+        nuevo_grupo = request.POST.get('grupo')
+        if nuevo_grupo:
+            usuario.groups.clear()
+            grupo = Group.objects.get(name=nuevo_grupo)
+            usuario.groups.add(grupo)
+            
+        usuario.save()
+        return redirect('lista_usuarios')
+        
+    return render(request, 'gestion/usuarios_editar.html', {'u': usuario, 'grupos': grupos})

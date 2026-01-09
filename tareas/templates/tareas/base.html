@@ -41,9 +41,11 @@
                     <a href="{% url 'lista_pacientes' %}" class="{% if 'gestion' in request.path %}active{% endif %}">
                         <i class="bi bi-heart-pulse-fill"></i> Salud & Pacientes
                     </a>
+                    {% if user.is_superuser or request.user.groups.all.0.name == 'Administrador' %}
                     <a href="{% url 'lista_usuarios' %}" class="{% if 'usuarios' in request.path %}active{% endif %}">
                         <i class="bi bi-people-fill"></i> Talento Humano
                     </a>
+{% endif %}
                     <a href="#">
                         <i class="bi bi-pc-display"></i> Inventario
                     </a>

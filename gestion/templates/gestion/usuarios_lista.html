@@ -11,17 +11,71 @@
     </a>
 </div>
 
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-light border-0">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="bi bi-shield-check me-2"></i> Matriz de Permisos por Rol</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered bg-white mb-0 small">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Módulo / Acción</th>
+                                <th>Administrador</th>
+                                <th>Médico</th>
+                                <th>Recepción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Gestionar Personal y Seguridad</td>
+                                <td class="text-center text-success">✅</td>
+                                <td class="text-center text-danger">❌</td>
+                                <td class="text-center text-danger">❌</td>
+                            </tr>
+                            <tr>
+                                <td>Registrar / Editar Pacientes</td>
+                                <td class="text-center text-success">✅</td>
+                                <td class="text-center text-success">✅</td>
+                                <td class="text-center text-success">✅</td>
+                            </tr>
+                            <tr>
+                                <td>Escribir Consultas Médicas</td>
+                                <td class="text-center text-success">✅</td>
+                                <td class="text-center text-success">✅</td>
+                                <td class="text-center text-danger">❌</td>
+                            </tr>
+                            <tr>
+                                <td>Eliminar Registros</td>
+                                <td class="text-center text-success">✅</td>
+                                <td class="text-center text-danger">❌</td>
+                                <td class="text-center text-danger">❌</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card shadow-sm">
     <div class="card-body p-0">
         <table class="table table-hover mb-0 align-middle">
             <thead class="bg-light">
-                <tr>
-                    <th class="ps-4">Funcionario</th>
-                    <th>Usuario</th>
-                    <th>Rol / Grupo</th>
-                    <th>Estado</th>
-                    <th class="text-end pe-4">Acciones</th>
-                </tr>
+                <td>
+                    {% if u.is_active %}
+                        <span class="badge bg-success">Activo</span>
+                    {% else %}
+                        <span class="badge bg-danger">Retirado</span>
+                    {% endif %}
+                </td>
+                
+                <td class="text-end pe-4">
+                    <a href="{% url 'editar_usuario' u.id %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                </td>
             </thead>
             <tbody>
                 {% for u in usuarios %}
