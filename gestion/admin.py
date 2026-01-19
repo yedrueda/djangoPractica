@@ -5,7 +5,7 @@ from .models import Paciente, Consulta
 class PacienteAdmin(admin.ModelAdmin):
     list_display = ('cedula', 'nombres', 'apellidos', 'telefono') # Columnas visibles
     search_fields = ('cedula', 'apellidos') # Barra de búsqueda
-    list_filter = ('fecha_registro',) # Filtros a la derecha
+    #list_filter = ('fecha_registro',) # Filtros a la derecha
 
 # Registramos el modelo
 admin.site.register(Paciente, PacienteAdmin)
