@@ -6,11 +6,16 @@
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    # pkgs.go
-    # pkgs.python311
-    # pkgs.python311Packages.pip
-    # pkgs.nodejs_20
-    # pkgs.nodePackages.nodemon
+    pkgs.python312
+    pkgs.python312Packages.pip
+    pkgs.python312Packages.asgiref
+    pkgs.python312Packages.django
+    pkgs.python312Packages.dj-database-url
+    pkgs.python312Packages.gunicorn
+    pkgs.python312Packages.psycopg2
+    pkgs.python312Packages.sqlparse
+    pkgs.python312Packages.whitenoise
+    pkgs.python312Packages.python-dotenv
   ];
 
   # Sets environment variables in the workspace
