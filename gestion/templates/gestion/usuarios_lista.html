@@ -67,7 +67,8 @@
                     <th class="ps-4">Funcionario</th>
                     <th>Usuario</th>
                     <th>Rol / Grupo</th>
-                    <th>Estatus</th> <th class="text-end pe-4">Acciones</th>
+                    <th>Estatus</th>
+                    <th class="text-end pe-4">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -77,7 +78,9 @@
                         <div class="fw-bold">{{ u.get_full_name|default:u.username }}</div>
                         <small class="text-muted">{{ u.email|default:"Sin correo" }}</small>
                     </td>
-                    <td><span class="badge bg-light text-dark border">{{ u.username }}</span></td>
+                    <td>
+                        <span class="badge bg-light text-dark border">{{ u.username }}</span>
+                    </td>
                     <td>
                         {% for grupo in u.groups.all %}
                             <span class="badge bg-primary bg-opacity-10 text-primary">{{ grupo.name }}</span>
@@ -93,7 +96,7 @@
                         {% endif %}
                     </td>
                     <td class="text-end pe-4">
-                        <a href="{% url 'editar_usuario' u.id %}" class="btn btn-sm btn-outline-primary" title="Editar funcionario">
+                        <a href="{% url 'editar_usuario' u.id %}" class="btn btn-sm btn-outline-primary" title="Editar">
                             <i class="bi bi-pencil"></i>
                         </a>
                     </td>
@@ -103,7 +106,7 @@
                     <td colspan="5" class="text-center py-4 text-muted">No hay personal registrado.</td>
                 </tr>
                 {% endfor %}
-            </tbody>
+                </tbody>
         </table>
     </div>
 </div>
