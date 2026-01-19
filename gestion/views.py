@@ -32,14 +32,26 @@ def crear_paciente(request):
 def dashboard(request):
     #contamos los datos reales 
     total_pacientes = Paciente.objects.count()
+    total_consultas = Consulta.objects.count()
+
+    resp = Consulta.objects.filter(programa='RESPIRATORIO').count()
+    endo = Consulta.objects.filter(programa='ENDOCRINO').count()
+    ruta = Consulta.objects.filter(programa='RUTA_MATERNA').count()
+    ssr = Consulta.objects.filter(programa='SSR').count()
 
     #preparamos los datos para enviarlos a la plantilla
-    contexto = {
-        'total_pacientes': total_pacientes,
-        'total_personal': 42,  # Ejemplo estático
-        'total_equipos': 15    # Ejemplo estático
+    context = {
+        'total_p': total_pacientes,
+        'total_c': total_consultas,
+        'prog_stats': {
+            'Respiratorio': resp,
+            'Endocrino': endo,
+            'Ruta Materna': ruta,
+            'SSR': ssr,
+        }
     }
-    return render(request, 'gestion/home.html', contexto)
+    return render(request, 'gestion/dashboard.html', context)
+    
 
 @login_required
 @user_passes_test(es_medico)

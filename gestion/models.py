@@ -25,24 +25,30 @@ class Paciente(models.Model):
     # ... (tu modelo Paciente está arriba) ...
 
 class Consulta(models.Model):
-    # Relación: Si borras al paciente, se borran sus consultas (CASCADE)
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='consultas')
-    
-    fecha = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Atención")
-    motivo = models.CharField(max_length=200, verbose_name="Motivo de Consulta")
-    sintomas = models.TextField(verbose_name="Sintomatología")
-    diagnostico = models.TextField(verbose_name="Diagnóstico Médico")
-    tratamiento = models.TextField(verbose_name="Tratamiento Indicado")
-    
-    # Datos opcionales (signos vitales)
-    presion_arterial = models.CharField(max_length=20, blank=True, null=True)
-    temperatura = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True)
-    
-    def __str__(self):
-        return f"Consulta {self.paciente.nombres} - {self.fecha.strftime('%d/%m/%Y')}"
+    # Opciones de programas
+    PROGRAMAS = [
+        ('GENERAL', 'Consulta General'),
+        ('RESPIRATORIO', 'Programa Respiratorio'),
+        ('ENDOCRINO', 'Endocrinometabólico (Diabetes/HTA)'),
+        ('RUTA_MATERNA', 'Ruta Materna'),
+        ('SSR', 'Salud Sexual y Reproductiva (SSR)'),
+    ]
 
-    class Meta:
-        ordering = ['-fecha'] # Las más recientes primero
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='consultas')
+    fecha = models.DateTimeField(auto_now_add=True)
+    
+    # Nuevo campo de Programa
+    programa = models.CharField(max_length=20, choices=PROGRAMAS, default='GENERAL')
+    
+    motivo = models.TextField()
+    diagnostico = models.TextField()
+    tratamiento = models.TextField()
+    medico = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return f"{self.paciente.nombres} - {self.get_programa_display()} ({self.fecha.date()})"
+
+
     
 
 from django.db.models.signals import post_migrate
