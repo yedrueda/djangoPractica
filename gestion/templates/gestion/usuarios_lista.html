@@ -61,55 +61,57 @@
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
-        <table class="table table-hover mb-0 align-middle">
-            <thead class="bg-light">
-                <tr>
-                    <th class="ps-4">Funcionario</th>
-                    <th>Usuario</th>
-                    <th>Rol / Grupo</th>
-                    <th>Estatus</th>
-                    <th class="text-end pe-4">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for u in usuarios %}
-                <tr>
-                    <td class="ps-4">
-                        <div class="fw-bold">{{ u.get_full_name|default:u.username }}</div>
-                        <small class="text-muted">{{ u.email|default:"Sin correo" }}</small>
-                    </td>
-                    <td>
-                        <span class="badge bg-light text-dark border">{{ u.username }}</span>
-                    </td>
-                    <td>
-                        {% for grupo in u.groups.all %}
-                            <span class="badge bg-primary bg-opacity-10 text-primary">{{ grupo.name }}</span>
-                        {% empty %}
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary">Sin Rol</span>
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% if u.is_active %}
-                            <span class="badge bg-success bg-opacity-10 text-success border-success border">Activo</span>
-                        {% else %}
-                            <span class="badge bg-danger bg-opacity-10 text-danger border-danger border">Retirado</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-end pe-4">
-                        {% if u.id %}
-                        <a href="{% url 'editar_usuario' u.id %}" class="btn btn-sm btn-outline-primary" title="Editar">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center py-4 text-muted">No hay personal registrado.</td>
-                </tr>
-                {% endfor %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Funcionario</th>
+                        <th>Usuario</th>
+                        <th>Rol / Grupo</th>
+                        <th>Estatus</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="fw-bold">{{ u.get_full_name|default:u.username }}</div>
+                            <small class="text-muted">{{ u.email|default:"Sin correo" }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ u.username }}</span>
+                        </td>
+                        <td>
+                            {% for grupo in u.groups.all %}
+                                <span class="badge bg-primary bg-opacity-10 text-primary">{{ grupo.name }}</span>
+                            {% empty %}
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary">Sin Rol</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if u.is_active %}
+                                <span class="badge bg-success bg-opacity-10 text-success border-success border">Activo</span>
+                            {% else %}
+                                <span class="badge bg-danger bg-opacity-10 text-danger border-danger border">Retirado</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            {% if u.pk %}
+                            <a href="{% url 'editar_usuario' u.pk %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">No hay personal registrado.</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
