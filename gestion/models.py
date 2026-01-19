@@ -1,45 +1,31 @@
 from django.db import models
 
+from django.db import models
+from django.contrib.auth.models import User
+
 class Paciente(models.Model):
-    # Identificación
-    cedula = models.CharField(max_length=15, unique=True, verbose_name="Cédula de Identidad")
     nombres = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
-    
-    # Datos Demográficos
+    cedula = models.CharField(max_length=20, unique=True)
     fecha_nacimiento = models.DateField()
-    telefono = models.CharField(max_length=20, blank=True, null=True, verbose_name="Teléfono")
-    direccion = models.TextField(blank=True, null=True, verbose_name="Dirección de Habitación")
-    
-    # Datos del Sistema
-    fecha_registro = models.DateTimeField(auto_now_add=True) # Se llena solo al crear
-    
-    def __str__(self):
-        return f"{self.nombres} {self.apellidos} ({self.cedula})"
-        
-    class Meta:
-        verbose_name = "Paciente"
-        verbose_name_plural = "Pacientes"
-        ordering = ['apellidos'] # Ordenar alfabéticamente por defecto
+    telefono = models.CharField(max_length=20)
+    direccion = models.TextField()
 
-    # ... (tu modelo Paciente está arriba) ...
+    def __str__(self):
+        return f"{self.nombres} {self.apellidos}"
 
 class Consulta(models.Model):
-    # Opciones de programas
     PROGRAMAS = [
         ('GENERAL', 'Consulta General'),
         ('RESPIRATORIO', 'Programa Respiratorio'),
-        ('ENDOCRINO', 'Endocrinometabólico (Diabetes/HTA)'),
+        ('ENDOCRINO', 'Endocrinometabólico'),
         ('RUTA_MATERNA', 'Ruta Materna'),
-        ('SSR', 'Salud Sexual y Reproductiva (SSR)'),
+        ('SSR', 'Salud Sexual y Reproductiva'),
     ]
-
+    
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='consultas')
     fecha = models.DateTimeField(auto_now_add=True)
-    
-    # Nuevo campo de Programa
     programa = models.CharField(max_length=20, choices=PROGRAMAS, default='GENERAL')
-    
     motivo = models.TextField()
     diagnostico = models.TextField()
     tratamiento = models.TextField()

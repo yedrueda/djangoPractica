@@ -97,8 +97,8 @@
                             {% endif %}
                         </td>
                         <td class="text-end pe-4">
-                            {% if u.pk %}
-                            <a href="{% url 'editar_usuario' u.pk %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                            {% if u.id %}
+                            <a href="{% url 'editar_usuario' u.id %}" class="btn btn-sm btn-outline-primary" title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             {% endif %}
@@ -114,6 +114,4 @@
         </div>
     </div>
 </div>
-{% endblock %} ```
-
-
+{% endblock %}
