@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Paciente, Consulta
-from .forms import PacienteForm, ConsultaForm
+from .forms import EditarUsuarioForm, PacienteForm, ConsultaForm
 from django.contrib.auth.models import User, Group
 
 
@@ -10,6 +10,12 @@ def es_admin(user):
 
 def es_medico(user):
     return user.groups.filter(name='Médico').exists() or es_admin(user)
+
+@user_passes_test(es_admin)
+def lista_usuarios(request):
+    # Solo los administradores entrarán aquí
+    usuarios = User.objects.all()
+    return render(request, 'gestion/usuarios_lista.html', {'usuarios': usuarios})
 
 @login_required
 def lista_pacientes(request):
@@ -50,8 +56,17 @@ def dashboard(request):
             'SSR': ssr,
         }
     }
-    return render(request, 'gestion/dashboard.html', context)
+    return render(request, 'gestion/home.html', context)
     
+    stats = {
+        'respiratorio': Consulta.objects.filter(programa='RESPIRATORIO').count(),
+        'endocrino': Consulta.objects.filter(programa='ENDOCRINO').count(),
+        'ruta_materna': Consulta.objects.filter(programa='RUTA_MATERNA').count(),
+        'ssr': Consulta.objects.filter(programa='SSR').count(),
+        'total': Consulta.objects.count(),
+    }
+    
+    return render(request, 'gestion/home.html', {'stats': stats})
 
 @login_required
 @user_passes_test(es_medico)
@@ -172,3 +187,25 @@ def lista_programa(request, programa_nombre):
         'consultas': consultas,
         'titulo': titulo
     })
+
+# En gestion/views.py
+@login_required
+def editar_usuario(request, user_id):
+    usuario = get_object_or_404(User, id=user_id)
+    
+    if request.method == 'POST':
+        form = EditarUsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            user = form.save()
+            # Limpiamos los grupos anteriores y asignamos el nuevo
+            nuevo_rol = form.cleaned_data.get('rol')
+            if nuevo_rol:
+                user.groups.clear()
+                user.groups.add(nuevo_rol)
+            return redirect('lista_usuarios')
+    else:
+        # Pre-seleccionamos el rol actual del usuario si tiene uno
+        rol_actual = usuario.groups.first()
+        form = EditarUsuarioForm(instance=usuario, initial={'rol': rol_actual})
+    
+    return render(request, 'gestion/usuarios_editar.html', {'form': form, 'usuario': usuario})

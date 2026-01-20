@@ -1,43 +1,58 @@
 {% extends 'tareas/base.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
+<div class="row justify-content-center mt-4">
     <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h4 class="mb-0 fw-bold text-primary">✏️ Editar Funcionario</h4>
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary py-3">
+                <h4 class="mb-0 fw-bold text-white">✏️ Editar Funcionario</h4>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form method="POST">
                     {% csrf_token %}
-                    <div class="row g-3">
-                        <div class="col-md-6">
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Nombre de Usuario</label>
+                        {{ form.username }}
+                        <div class="form-text text-muted">El nombre de usuario no se puede modificar.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label small fw-bold">Nombres</label>
-                            <input type="text" name="first_name" value="{{ u.first_name }}" class="form-control" required>
+                            {{ form.first_name }}
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label small fw-bold">Apellidos</label>
-                            <input type="text" name="last_name" value="{{ u.last_name }}" class="form-control" required>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Estatus Laboral</label>
-                            <select name="is_active" class="form-select">
-                                <option value="1" {% if u.is_active %}selected{% endif %}>Activo (En funciones)</option>
-                                <option value="0" {% if not u.is_active %}selected{% endif %}>Retirado (Sin acceso al sistema)</option>
-                            </select>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Rol</label>
-                            <select name="grupo" class="form-select">
-                                {% for g in grupos %}
-                                <option value="{{ g.name }}" {% if g in u.groups.all %}selected{% endif %}>{{ g.name }}</option>
-                                {% endfor %}
-                            </select>
+                            {{ form.last_name }}
                         </div>
                     </div>
-                    <div class="mt-4 d-flex justify-content-between">
-                        <a href="{% url 'lista_usuarios' %}" class="btn btn-light border">Volver</a>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Correo Electrónico</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="mb-3 p-3 bg-light border-start border-primary border-4 rounded shadow-sm">
+                        <label class="form-label fw-bold text-primary">Rol en el CDI</label>
+                        {{ form.rol }} 
+                        {% if form.rol.errors %}
+                            <div class="text-danger small">{{ form.rol.errors }}</div>
+                        {% endif %}
+                        <div class="form-text small">Médico (Acceso a programas), Recepción (Registro) o Admin.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            {{ form.is_active }}
+                            <label class="form-check-label fw-bold">Estatus: Activo (En funciones)</label>
+                        </div>
+                        <small class="text-muted">Si se desactiva, el funcionario no podrá entrar al sistema.</small>
+                    </div>
+
+                    <div class="d-flex justify-content-between pt-3 border-top">
+                        <a href="{% url 'lista_usuarios' %}" class="btn btn-outline-secondary px-4">Volver</a>
+                        <button type="submit" class="btn btn-success px-5 fw-bold">Guardar Cambios</button>
                     </div>
                 </form>
             </div>

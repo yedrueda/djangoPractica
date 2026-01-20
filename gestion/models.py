@@ -1,6 +1,4 @@
 from django.db import models
-
-from django.db import models
 from django.contrib.auth.models import User
 
 class Paciente(models.Model):
@@ -10,6 +8,8 @@ class Paciente(models.Model):
     fecha_nacimiento = models.DateField()
     telefono = models.CharField(max_length=20)
     direccion = models.TextField()
+    # Agrega esta línea exactamente así:
+    fecha_registro = models.DateTimeField(auto_now_add=True, null=True, blank=True) 
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
@@ -30,24 +30,20 @@ class Consulta(models.Model):
     diagnostico = models.TextField()
     tratamiento = models.TextField()
     medico = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-
-    def __str__(self):
-        return f"{self.paciente.nombres} - {self.get_programa_display()} ({self.fecha.date()})"
-
-
     
+    # Campos específicos (CORREGIDO: Sin placeholder)
+    fur = models.DateField(null=True, blank=True, verbose_name="Fecha de Última Regla")
+    tension_arterial = models.CharField(max_length=10, null=True, blank=True)
+    peso_madre = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    glicemia = models.IntegerField(null=True, blank=True)
 
-from django.db.models.signals import post_migrate
-from django.dispatch import receiver
-from django.contrib.auth.models import Group, Permission
-
-@receiver(post_migrate)
-def crear_grupos_permisos(sender, **kwargs):
-    if sender.name == 'gestion':
-        # 1. Crear Grupos
-        admin_group, _ = Group.objects.get_or_create(name='Administrador')
-        medico_group, _ = Group.objects.get_or_create(name='Médico')
-        recepcion_group, _ = Group.objects.get_or_create(name='Recepción')
-
-        # Aquí podríamos asignar permisos específicos a cada grupo en el futuro
-        print("Grupos de seguridad configurados correctamente")
+    @property
+    def semanas_gestacion(self):
+        if self.fur:
+            from datetime import date
+            dias = (date.today() - self.fur).days
+            return f"{dias // 7} Semanas"
+        return None
+    
+    def __str__(self):
+        return f"{self.paciente.nombres} - {self.get_programa_display()}"

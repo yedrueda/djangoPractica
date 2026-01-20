@@ -1,69 +1,72 @@
 {% extends 'tareas/base.html' %}
 
 {% block content %}
-    <div class="row g-4">
-    <div class="col-md-3">
-        <a href="{% url 'lista_programa' 'RESPIRATORIO' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm bg-warning bg-opacity-10 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-lungs text-warning display-6 mb-2"></i>
-                    <h6 class="text-muted">Respiratorio</h6>
-                    <h3 class="fw-bold text-dark">{{ stats.respiratorio }}</h3>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <div class="col-md-3">
-        <a href="{% url 'lista_programa' 'ENDOCRINO' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm bg-danger bg-opacity-10 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-droplet-half text-danger display-6 mb-2"></i>
-                    <h6 class="text-muted">Endocrino</h6>
-                    <h3 class="fw-bold text-dark">{{ stats.endocrino }}</h3>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <div class="col-md-3">
-        <a href="{% url 'lista_programa' 'RUTA_MATERNA' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm bg-info bg-opacity-10 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-person-heart text-info display-6 mb-2"></i>
-                    <h6 class="text-muted">Ruta Materna</h6>
-                    <h3 class="fw-bold text-dark">{{ stats.ruta }}</h3>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <div class="col-md-3">
-        <a href="{% url 'lista_programa' 'SSR' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm bg-primary bg-opacity-10 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-gender-ambiguous text-primary display-6 mb-2"></i>
-                    <h6 class="text-muted">SSR</h6>
-                    <h3 class="fw-bold text-dark">{{ stats.ssr }}</h3>
-                </div>
-            </div>
-        </a>
-    </div>
-</div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold text-dark mb-0">Panel General</h2>
-            <p class="text-muted small">Resumen operativo del CDI</p>
+            <p class="text-muted small">Bienvenido, {{ user.get_full_name|default:user.username }} ({{ user.groups.all.0.name }})</p>
         </div>
         <span class="badge bg-white text-dark border shadow-sm px-3 py-2">
             <i class="bi bi-calendar-event me-2"></i> Fecha: {% now "d F Y" %}
         </span>
     </div>
 
+    {% if user.groups.all.0.name == 'Médico' or user.groups.all.0.name == 'Administrador' %}
     <div class="row g-4 mb-4">
-        
+        <div class="col-md-3">
+            <a href="{% url 'lista_programa' 'RESPIRATORIO' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm bg-warning bg-opacity-10 h-100 border-bottom border-4 border-warning">
+                    <div class="card-body text-center">
+                        <i class="bi bi-lungs text-warning display-6 mb-2"></i>
+                        <h6 class="text-muted small fw-bold">Respiratorio</h6>
+                        <h3 class="fw-bold text-dark">{{ stats.respiratorio }}</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="{% url 'lista_programa' 'ENDOCRINO' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm bg-danger bg-opacity-10 h-100 border-bottom border-4 border-danger">
+                    <div class="card-body text-center">
+                        <i class="bi bi-droplet-half text-danger display-6 mb-2"></i>
+                        <h6 class="text-muted small fw-bold">Endocrino</h6>
+                        <h3 class="fw-bold text-dark">{{ stats.endocrino }}</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="{% url 'lista_programa' 'RUTA_MATERNA' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm bg-info bg-opacity-10 h-100 border-bottom border-4 border-info">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person-heart text-info display-6 mb-2"></i>
+                        <h6 class="text-muted small fw-bold">Ruta Materna</h6>
+                        <h3 class="fw-bold text-dark">{{ stats.ruta }}</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="{% url 'lista_programa' 'SSR' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm bg-primary bg-opacity-10 h-100 border-bottom border-4 border-primary">
+                    <div class="card-body text-center">
+                        <i class="bi bi-gender-ambiguous text-primary display-6 mb-2"></i>
+                        <h6 class="text-muted small fw-bold">SSR</h6>
+                        <h3 class="fw-bold text-dark">{{ stats.ssr }}</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row g-4 mb-4">
+        {% if user.groups.all.0.name == 'Administrador' %}
         <div class="col-md-4">
-            <div class="card p-3 h-100 border-start border-4 border-primary">
+            <div class="card p-3 h-100 border-0 shadow-sm border-start border-4 border-primary">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="text-muted mb-1 small fw-bold text-uppercase">Personal Activo</p>
@@ -75,9 +78,10 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
         <div class="col-md-4">
-            <div class="card p-3 h-100 border-start border-4 border-success">
+            <div class="card p-3 h-100 border-0 shadow-sm border-start border-4 border-success">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="text-muted mb-1 small fw-bold text-uppercase">Pacientes Registrados</p>
@@ -90,8 +94,9 @@
             </div>
         </div>
 
+        {% if user.groups.all.0.name == 'Administrador' or user.groups.all.0.name == 'Recepción' %}
         <div class="col-md-4">
-            <div class="card p-3 h-100 border-start border-4 border-warning">
+            <div class="card p-3 h-100 border-0 shadow-sm border-start border-4 border-warning">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="text-muted mb-1 small fw-bold text-uppercase">Alertas Equipos</p>
@@ -103,15 +108,17 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
-    <div class="card">
-        <div class="card-header bg-white">
-            <i class="bi bi-graph-up me-2"></i> Estadística Semanal
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-graph-up me-2 text-primary"></i>Estadística Semanal de Atenciones</h5>
         </div>
         <div class="card-body text-center py-5">
-            <div style="background: repeating-linear-gradient(45deg, #f8f9fa, #f8f9fa 10px, #fff 10px, #fff 20px); border-radius:10px; padding:40px; border:2px dashed #dee2e6;">
-                <span class="text-muted fw-bold">Aquí cargaremos la gráfica de atenciones (Próximamente)</span>
+            <div style="background: repeating-linear-gradient(45deg, #f8f9fa, #f8f9fa 10px, #fff 10px, #fff 20px); border-radius:15px; padding:60px; border:2px dashed #dee2e6;">
+                <i class="bi bi-bar-chart-line display-1 text-light mb-3 d-block"></i>
+                <span class="text-muted fw-bold">El módulo de análisis de datos estará disponible próximamente.</span>
             </div>
         </div>
     </div>

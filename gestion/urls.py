@@ -7,7 +7,7 @@ urlpatterns = [
     path('programas/<str:programa_nombre>/', views.lista_programa, name='lista_programa'),
     
     # 2. Pacientes
-    path('pacientes/', views.lista_pacientes, name='lista_pacientes'),
+    path('pacientes/', views.lista_pacientes, name='pacientes_lista'),
     path('pacientes/crear/', views.crear_paciente, name='crear_paciente'),
     path('pacientes/editar/<int:paciente_id>/', views.editar_paciente, name='editar_paciente'), 
     
@@ -19,4 +19,5 @@ urlpatterns = [
     path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
     path('usuarios/nuevo/', views.crear_usuario, name='crear_usuario'),
     path('usuarios/editar/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
+    
 ]
