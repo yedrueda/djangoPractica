@@ -157,3 +157,18 @@ def editar_usuario(request, user_id):
         return redirect('lista_usuarios')
         
     return render(request, 'gestion/usuarios_editar.html', {'u': usuario, 'grupos': grupos})
+
+
+@login_required
+def lista_programa(request, programa_nombre):
+    # Obtenemos todas las consultas de ese programa
+    consultas = Consulta.objects.filter(programa=programa_nombre).select_related('paciente')
+    
+    # Obtenemos el nombre "bonito" del programa para el título
+    nombres_programas = dict(Consulta.PROGRAMAS)
+    titulo = nombres_programas.get(programa_nombre, "Programa")
+
+    return render(request, 'gestion/programa_detalle.html', {
+        'consultas': consultas,
+        'titulo': titulo
+    })

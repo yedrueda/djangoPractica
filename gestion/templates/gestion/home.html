@@ -1,6 +1,55 @@
 {% extends 'tareas/base.html' %}
 
 {% block content %}
+    <div class="row g-4">
+    <div class="col-md-3">
+        <a href="{% url 'lista_programa' 'RESPIRATORIO' %}" class="text-decoration-none">
+            <div class="card border-0 shadow-sm bg-warning bg-opacity-10 h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-lungs text-warning display-6 mb-2"></i>
+                    <h6 class="text-muted">Respiratorio</h6>
+                    <h3 class="fw-bold text-dark">{{ stats.respiratorio }}</h3>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="{% url 'lista_programa' 'ENDOCRINO' %}" class="text-decoration-none">
+            <div class="card border-0 shadow-sm bg-danger bg-opacity-10 h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-droplet-half text-danger display-6 mb-2"></i>
+                    <h6 class="text-muted">Endocrino</h6>
+                    <h3 class="fw-bold text-dark">{{ stats.endocrino }}</h3>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="{% url 'lista_programa' 'RUTA_MATERNA' %}" class="text-decoration-none">
+            <div class="card border-0 shadow-sm bg-info bg-opacity-10 h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-heart text-info display-6 mb-2"></i>
+                    <h6 class="text-muted">Ruta Materna</h6>
+                    <h3 class="fw-bold text-dark">{{ stats.ruta }}</h3>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="{% url 'lista_programa' 'SSR' %}" class="text-decoration-none">
+            <div class="card border-0 shadow-sm bg-primary bg-opacity-10 h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-gender-ambiguous text-primary display-6 mb-2"></i>
+                    <h6 class="text-muted">SSR</h6>
+                    <h3 class="fw-bold text-dark">{{ stats.ssr }}</h3>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold text-dark mb-0">Panel General</h2>
