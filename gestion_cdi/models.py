@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 
 # --- 1. EJE DE PERSONAL ---
 class PersonalCDI(models.Model):
+    TIPO_DOC = [('V', 'Venezolano'), ('E', 'Extranjero')]
+    tipo_cedula = models.CharField(max_length=1, choices=TIPO_DOC, default='V') # <-- NUEVO CAMPO
     cedula = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
@@ -24,6 +26,8 @@ class PersonalCDI(models.Model):
 
 # --- 2. EJE PACIENTES ---
 class Paciente(models.Model):
+    TIPO_DOC = [('V', 'Venezolano'), ('E', 'Extranjero')]
+    tipo_cedula = models.CharField(max_length=1, choices=TIPO_DOC, default='V') # <-- NUEVO CAMPO
     cedula = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
