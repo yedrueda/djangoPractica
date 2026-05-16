@@ -1,0 +1,39 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Registrar Personal{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Registrar Nuevo Miembro del Personal</h4>
+            </div>
+            <div class="card-body bg-white p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted fw-bold">Cédula de Identidad</label>
+                            <div class="input-group">
+                                {{ form.tipo_cedula }}
+                                {{ form.cedula }}
+                            </div>
+                        </div>
+                        {% for field in form %}
+                            {% if field.name != 'cedula' and field.name != 'tipo_cedula' %}
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted fw-bold">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="mt-4 text-end">
+                        <a href="{% url 'lista_personal' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-info text-white">Guardar Registro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
