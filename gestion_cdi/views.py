@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Paciente, PersonalCDI, InventarioEquipo
 from .forms import PacienteForm
@@ -32,7 +32,30 @@ def crear_paciente(request):
         form = PacienteForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'gestion_cdi/crear_paciente.html', {'form': PacienteForm(), 'success': True})
+            return redirect('lista_pacientes')
     else:
         form = PacienteForm()
     return render(request, 'gestion_cdi/crear_paciente.html', {'form': form})
+
+
+@login_required
+def editar_paciente(request, cedula):
+    paciente = get_object_or_404(Paciente, cedula=cedula)
+    if request.method == 'POST':
+        form = PacienteForm(request.POST, instance=paciente)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_pacientes')
+    else:
+        form = PacienteForm(instance=paciente)
+    return render(request, 'gestion_cdi/editar_paciente.html', {'form': form, 'paciente': paciente})    
+
+@login_required
+def borrar_paciente(request, cedula):
+    paciente = get_object_or_404(Paciente, cedula=cedula)
+    if request.method == 'POST':
+        paciente.delete()
+        return redirect('lista_pacientes')
+    return render(request, 'gestion_cdi/borrar_paciente.html', {'paciente': paciente})        
+
+

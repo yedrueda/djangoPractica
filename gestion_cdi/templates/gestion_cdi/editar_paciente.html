@@ -1,0 +1,42 @@
+{% extends 'gestion_cdi/base.html' %}
+
+{% block titulo %}Editar Paciente{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Actualizar Datos: {{ paciente.nombre }} {{ paciente.apellido }}</h4>
+            </div>
+            <div class="card-body bg-white p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted fw-bold">Cédula de Identidad</label>
+                            <div class="input-group">
+                                {{ form.tipo_cedula }}
+                                <input type="number" name="cedula" value="{{ paciente.cedula }}" class="form-control" readonly style="border-top-left-radius: 0; border-bottom-left-radius: 0; background-color: #e9ecef;">
+                            </div>
+                        </div>
+
+                        {% for field in form %}
+                            {% if field.name != 'cedula' and field.name != 'tipo_cedula' %}
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted fw-bold">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="mt-4 text-end">
+                        <a href="{% url 'lista_pacientes' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Actualizar Registro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

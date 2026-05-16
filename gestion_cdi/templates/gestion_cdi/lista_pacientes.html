@@ -23,13 +23,13 @@
             <tbody>
                 {% for paciente in pacientes %}
                 <tr>
-                    <td>{{ paciente.cedula }}</td>
                     <td>{{ paciente.tipo_cedula }}-{{ paciente.cedula }}</td>
+                    <td>{{ paciente.nombre }} {{ paciente.apellido }}</td>
                     <td>{{ paciente.get_sexo_display }}</td>
                     <td>{{ paciente.asic }}</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary" disabled>Editar</button>
-                        <button class="btn btn-sm btn-outline-danger" disabled>Borrar</button>
+                        <a href="{% url 'editar_paciente' paciente.cedula %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="{% url 'borrar_paciente' paciente.cedula %}" class="btn btn-sm btn-outline-danger">Borrar</a>
                     </td>
                 </tr>
                 {% empty %}

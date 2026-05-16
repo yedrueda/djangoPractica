@@ -13,4 +13,6 @@ urlpatterns = [
     # Rutas para la gestión de pacientes
     path('pacientes/', views.lista_pacientes, name='lista_pacientes'),
     path('pacientes/nuevo/', views.crear_paciente, name='crear_paciente'),
+    path('pacientes/editar/<int:cedula>/', views.editar_paciente, name='editar_paciente'),
+    path('pacientes/borrar/<int:cedula>/', views.borrar_paciente, name='borrar_paciente'),
 ]

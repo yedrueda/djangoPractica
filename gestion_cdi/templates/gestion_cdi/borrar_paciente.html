@@ -1,0 +1,24 @@
+{% extends 'gestion_cdi/base.html' %}
+
+{% block titulo %}Borrar Paciente{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow border-danger">
+            <div class="card-body text-center p-5">
+                <h1 class="text-danger mb-4">⚠️ Advertencia</h1>
+                <h4 class="mb-3">¿Estás absolutamente seguro de que deseas eliminar a:</h4>
+                <h2 class="text-dark fw-bold mb-4">{{ paciente.tipo_cedula }}-{{ paciente.cedula }} | {{ paciente.nombre }} {{ paciente.apellido }}?</h2>
+                <p class="text-muted mb-4">Esta acción no se puede deshacer y borrará toda la historia médica asociada a este paciente en el CDI.</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <a href="{% url 'lista_pacientes' %}" class="btn btn-secondary px-4 me-2">Cancelar y Volver</a>
+                    <button type="submit" class="btn btn-danger px-4">Sí, Eliminar Definitivamente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
