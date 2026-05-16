@@ -1,5 +1,5 @@
 from django import forms
-from .models import Paciente, PersonalCDI
+from .models import Paciente, PersonalCDI, InventarioEquipo
 
 class PacienteForm(forms.ModelForm):
     class Meta:
@@ -49,4 +49,19 @@ class PersonalCDIForm(forms.ModelForm):
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'estatus': forms.Select(attrs={'class': 'form-select'}),
             'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+class InventarioEquipoForm(forms.ModelForm):
+    class Meta:
+        model = InventarioEquipo
+        fields = '__all__'
+        widgets = {
+            'codigo_bien_nacional': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: BN-12345'}),
+            'nombre_equipo': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo_equipo': forms.Select(attrs={'class': 'form-select'}),
+            'ubicacion_especifica': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Consultorio 2'}),
+            'estado_fisico': forms.Select(attrs={'class': 'form-select'}),
+            'responsable_mantenimiento': forms.Select(attrs={'class': 'form-select'}),
+            'ultima_revision': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'proximo_mantenimiento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }

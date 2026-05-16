@@ -1,0 +1,50 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Inventario de Equipos{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Inventario Tecnológico y Médico</h2>
+    <a href="{% url 'crear_equipo' %}" class="btn btn-warning text-dark fw-bold">+ Registrar Equipo</a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Bien Nacional</th>
+                    <th>Equipo</th>
+                    <th>Ubicación</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for equipo in equipos %}
+                <tr>
+                    <td class="fw-bold">{{ equipo.codigo_bien_nacional }}</td>
+                    <td>{{ equipo.nombre_equipo }} <br><small class="text-muted">{{ equipo.tipo_equipo }}</small></td>
+                    <td>{{ equipo.ubicacion_especifica }}</td>
+                    <td>
+                        {% if equipo.estado_fisico == 'Operativo' %}
+                            <span class="badge bg-success">Operativo</span>
+                        {% elif equipo.estado_fisico == 'En Reparación' %}
+                            <span class="badge bg-warning text-dark">En Reparación</span>
+                        {% else %}
+                            <span class="badge bg-danger">Dañado</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'editar_equipo' equipo.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="{% url 'borrar_equipo' equipo.id %}" class="btn btn-sm btn-outline-danger">Borrar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">No hay equipos registrados en el inventario.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

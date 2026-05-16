@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Paciente, PersonalCDI, InventarioEquipo
-from .forms import PacienteForm, PersonalCDIForm
+from .forms import PacienteForm, PersonalCDIForm, InventarioEquipoForm
 
 
 @login_required
@@ -58,6 +58,10 @@ def borrar_paciente(request, cedula):
         return redirect('lista_pacientes')
     return render(request, 'gestion_cdi/borrar_paciente.html', {'paciente': paciente})        
 
+# ==========================================
+# CRUD DE PERSONAL DEL CDI
+# ==========================================
+
 @login_required
 def lista_personal(request):
     personal = PersonalCDI.objects.all().order_by('-fecha_ingreso')  # Ordenamos por fecha de ingreso, el más reciente primero
@@ -93,3 +97,43 @@ def borrar_personal(request, cedula):
         personal.delete()
         return redirect('lista_personal')
     return render(request, 'gestion_cdi/borrar_personal.html', {'personal': personal})  
+
+# ==========================================
+# CRUD DE INVENTARIO DE EQUIPOS
+# ==========================================
+
+@login_required
+def lista_equipos(request):
+    equipos = InventarioEquipo.objects.all()
+    return render(request, 'gestion_cdi/lista_equipos.html', {'equipos': equipos})
+
+@login_required
+def crear_equipo(request):
+    if request.method == 'POST':
+        form = InventarioEquipoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_equipos')
+    else:
+        form = InventarioEquipoForm()
+    return render(request, 'gestion_cdi/crear_equipo.html', {'form': form})
+
+@login_required
+def editar_equipo(request, id):
+    equipo = get_object_or_404(InventarioEquipo, id=id)
+    if request.method == 'POST':
+        form = InventarioEquipoForm(request.POST, instance=equipo)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_equipos')
+    else:
+        form = InventarioEquipoForm(instance=equipo)
+    return render(request, 'gestion_cdi/editar_equipo.html', {'form': form, 'equipo': equipo})
+
+@login_required
+def borrar_equipo(request, id):
+    equipo = get_object_or_404(InventarioEquipo, id=id)
+    if request.method == 'POST':
+        equipo.delete()
+        return redirect('lista_equipos')
+    return render(request, 'gestion_cdi/borrar_equipo.html', {'equipo': equipo})

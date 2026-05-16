@@ -1,0 +1,32 @@
+{% extends 'gestion_cdi/base.html' %}
+
+{% block titulo %}Editar Equipo{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-warning text-dark fw-bold">
+                <h4 class="mb-0">Actualizar Datos: {{ equipo.nombre_equipo }}</h4>
+            </div>
+            <div class="card-body bg-white p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        {% for field in form %}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted fw-bold">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-4 text-end">
+                        <a href="{% url 'lista_equipos' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-warning fw-bold">Actualizar Registro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
