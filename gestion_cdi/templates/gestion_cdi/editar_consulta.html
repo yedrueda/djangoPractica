@@ -1,0 +1,31 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Editar Consulta{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white fw-bold">
+                <h4 class="mb-0">Actualizar Evaluación Médica</h4>
+            </div>
+            <div class="card-body bg-white p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        {% for field in form %}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted fw-bold">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}<small class="text-danger">{{ field.errors }}</small>{% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-4 text-end">
+                        <a href="{% url 'lista_consultas' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary fw-bold">Actualizar Historia</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

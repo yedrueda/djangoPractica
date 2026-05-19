@@ -8,30 +8,43 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4">
-        <div class="card text-white bg-success mb-3 shadow">
+    <div class="col-md-3 mb-3"> <div class="card text-white bg-success h-100 shadow">
             <div class="card-body">
-                <h5 class="card-title">Pacientes Registrados</h5>
+                <h5 class="card-title">Pacientes</h5>
                 <p class="card-text fs-1">{{ total_pacientes }}</p>
                 <a href="{% url 'lista_pacientes' %}" class="btn btn-light btn-sm mt-2">Ver Directorio</a>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card text-white bg-info mb-3 shadow">
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-info h-100 shadow">
             <div class="card-body">
                 <h5 class="card-title">Personal Activo</h5>
                 <p class="card-text fs-1">{{ total_personal }}</p>
+                <a href="{% url 'lista_personal' %}" class="btn btn-light btn-sm mt-2">Ver Personal</a>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card text-white bg-warning mb-3 shadow">
-            <div class="card-body">
-                <h5 class="card-title">Equipos en Inventario</h5>
+    <div class="col-md-3 mb-3">
+        <div class="card text-dark bg-warning h-100 shadow"> <div class="card-body">
+                <h5 class="card-title">Equipos</h5>
                 <p class="card-text fs-1">{{ total_equipos }}</p>
+                <a href="{% url 'lista_equipos' %}" class="btn btn-light btn-sm mt-2">Ver Inventario</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-primary h-100 shadow">
+            <div class="card-body">
+                <h5 class="card-title">Consultas Médicas</h5>
+                <p class="card-text fs-1">{{ total_consultas }}</p>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'lista_consultas' %}" class="btn btn-light btn-sm">Ver Historial</a>
+                    <a href="{% url 'crear_consulta' %}" class="btn btn-outline-light btn-sm">+ Nueva Consulta</a>
+                </div>
             </div>
         </div>
     </div>

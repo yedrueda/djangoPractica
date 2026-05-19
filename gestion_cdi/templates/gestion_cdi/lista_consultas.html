@@ -1,0 +1,43 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Historial de Consultas{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Historial Médico y Signos Vitales</h2>
+    <a href="{% url 'crear_consulta' %}" class="btn btn-success fw-bold">+ Registrar Consulta</a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Paciente</th>
+                    <th>Presión / Temp</th>
+                    <th>Diagnóstico Principal</th>
+                    <th>Médico Tratante</th>
+                    <th>Acciones</th> </tr>
+            </thead>
+            <tbody>
+                {% for control in controles %}
+                <tr>
+                    <td>{{ control.fecha_atencion|date:"d/m/Y" }}</td>
+                    <td class="fw-bold">{{ control.paciente.nombre }} {{ control.paciente.apellido }}</td>
+                    <td>{{ control.tension_arterial }} <br><small class="text-muted">{{ control.temperatura }} °C</small></td>
+                    <td>{{ control.diagnostico|truncatechars:50 }}</td>
+                    <td>Dr. {{ control.medico_tratante.apellido|default:"N/A" }}</td>
+                    <td>
+                        <a href="{% url 'editar_consulta' control.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="{% url 'borrar_consulta' control.id %}" class="btn btn-sm btn-outline-danger">Borrar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">No hay consultas registradas en el sistema.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

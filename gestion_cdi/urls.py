@@ -27,4 +27,10 @@ urlpatterns = [
     path('inventario/nuevo/', views.crear_equipo, name='crear_equipo'),
     path('inventario/editar/<int:id>/', views.editar_equipo, name='editar_equipo'),
     path('inventario/borrar/<int:id>/', views.borrar_equipo, name='borrar_equipo'),
+
+    # MÓDULO DE SALUD
+    path('consultas/', views.lista_consultas, name='lista_consultas'),
+    path('consultas/nueva/', views.crear_consulta, name='crear_consulta'),
+    path('consultas/editar/<int:id>/', views.editar_consulta, name='editar_consulta'),
+    path('consultas/borrar/<int:id>/', views.borrar_consulta, name='borrar_consulta'),
 ]

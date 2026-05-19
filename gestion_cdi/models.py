@@ -82,6 +82,28 @@ class PlanificacionFamiliar(models.Model):
     class Meta:
         verbose_name_plural = "Planificación Familiar"
 
+class ControlEndocrino(models.Model):
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='controles')
+    medico_tratante = models.ForeignKey(PersonalCDI, on_delete=models.SET_NULL, null=True)
+    
+    fecha_atencion = models.DateField(auto_now_add=True)
+    
+    # Signos Vitales (Ahora son opcionales con null=True, blank=True)
+    tension_arterial = models.CharField(max_length=10, null=True, blank=True, help_text="Ej: 120/80")
+    frecuencia_cardiaca = models.IntegerField(null=True, blank=True, help_text="LPM")
+    frecuencia_respiratoria = models.IntegerField(null=True, blank=True, help_text="RPM")
+    temperatura = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True, help_text="°C")
+    peso_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text="Kg")
+    talla_cm = models.IntegerField(null=True, blank=True, help_text="cm")
+    
+    # Exámenes y Diagnóstico
+    glucemia_ayunas = models.IntegerField(null=True, blank=True, help_text="mg/dL")
+    diagnostico = models.TextField(null=True, blank=True)
+    tratamiento = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Consulta: {self.paciente.nombre} {self.paciente.apellido} - {self.fecha_atencion}"
+
 
 # --- 4. EJE INFRAESTRUCTURA E INVENTARIO ---
 class InventarioEquipo(models.Model):
@@ -99,3 +121,8 @@ class InventarioEquipo(models.Model):
     
     class Meta:
         verbose_name_plural = "Inventario de Equipos"
+
+
+
+
+    

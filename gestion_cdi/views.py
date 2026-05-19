@@ -1,22 +1,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Paciente, PersonalCDI, InventarioEquipo
-from .forms import PacienteForm, PersonalCDIForm, InventarioEquipoForm
+from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino
+from .forms import PacienteForm, PersonalCDIForm, InventarioEquipoForm, ControlEndocrinoForm
 
 
-@login_required
+
+
+
+login_required
 def inicio(request):
-    # Aquí contamos cuántos registros hay para mostrarlos en la pantalla
     total_pacientes = Paciente.objects.count()
     total_personal = PersonalCDI.objects.count()
     total_equipos = InventarioEquipo.objects.count()
+    total_consultas = ControlEndocrino.objects.count() # <-- NUEVA LÍNEA: Contamos las consultas
 
     contexto = {
         'total_pacientes': total_pacientes,
         'total_personal': total_personal,
         'total_equipos': total_equipos,
+        'total_consultas': total_consultas, # <-- NUEVA LÍNEA: Lo pasamos al HTML
     }
-    
     return render(request, 'gestion_cdi/inicio.html', contexto)
 
 # Vista para listar pacientes
@@ -137,3 +140,43 @@ def borrar_equipo(request, id):
         equipo.delete()
         return redirect('lista_equipos')
     return render(request, 'gestion_cdi/borrar_equipo.html', {'equipo': equipo})
+
+# ==========================================
+# MÓDULO CLÍNICO: CONSULTAS Y SIGNOS VITALES
+# ==========================================
+
+@login_required
+def lista_consultas(request):
+    controles = ControlEndocrino.objects.all().order_by('-fecha_atencion')
+    return render(request, 'gestion_cdi/lista_consultas.html', {'controles': controles})
+
+@login_required
+def crear_consulta(request):
+    if request.method == 'POST':
+        form = ControlEndocrinoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_consultas')
+    else:
+        form = ControlEndocrinoForm()
+    return render(request, 'gestion_cdi/crear_consulta.html', {'form': form})
+
+@login_required
+def editar_consulta(request, id):
+    consulta = get_object_or_404(ControlEndocrino, id=id)
+    if request.method == 'POST':
+        form = ControlEndocrinoForm(request.POST, instance=consulta)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_consultas')
+    else:
+        form = ControlEndocrinoForm(instance=consulta)
+    return render(request, 'gestion_cdi/editar_consulta.html', {'form': form, 'consulta': consulta})
+
+@login_required
+def borrar_consulta(request, id):
+    consulta = get_object_or_404(ControlEndocrino, id=id)
+    if request.method == 'POST':
+        consulta.delete()
+        return redirect('lista_consultas')
+    return render(request, 'gestion_cdi/borrar_consulta.html', {'consulta': consulta})
