@@ -7,7 +7,7 @@ from .forms import PacienteForm, PersonalCDIForm, InventarioEquipoForm, ControlE
 
 
 
-login_required
+@login_required
 def inicio(request):
     total_pacientes = Paciente.objects.count()
     total_personal = PersonalCDI.objects.count()
