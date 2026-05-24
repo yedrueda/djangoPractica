@@ -18,10 +18,12 @@
             {% csrf_token %}
             
             <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue); letter-spacing: 1px;"><i class="fa-solid fa-user me-2"></i> 1. Identificación del Paciente</h6>
-                <div class="row mb-4">
+            <div class="row mb-4">
                 <div class="col-12">
-                    {{ form.paciente }} </div>
-</div>
+                    {{ form.paciente }}
+                </div>
+            </div>
+
             <hr class="text-muted my-4">
 
             <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue); letter-spacing: 1px;"><i class="fa-solid fa-heart-pulse me-2"></i> 2. Signos Vitales y Antropometría</h6>
@@ -79,4 +81,24 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Apuntamos al campo de paciente generado por Django
+        const selectPaciente = document.getElementById('id_paciente');
+        
+        if (selectPaciente) {
+            new TomSelect(selectPaciente, {
+                create: false, // Evita que el usuario cree pacientes nuevos desde aquí
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: "Escriba cédula, nombre o apellido...",
+                // Esta opción ayuda a que la búsqueda sea más precisa
+                searchField: ['text'],
+            });
+        }
+    });
+</script>
 {% endblock %}

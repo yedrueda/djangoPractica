@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino
-from .forms import PacienteForm, PersonalCDIForm, InventarioEquipoForm, ControlEndocrinoForm
+from .forms import PacienteForm, PersonalCDIForm, InventarioEquipoForm, ControlEndocrinoForm,RutaMaternaForm, PlanificacionFamiliarForm
 
 
 
@@ -189,16 +189,39 @@ def seleccionar_programa(request):
 
 @login_required
 def crear_control_endocrino(request):
-    """Vista para el formulario de evaluación de signos vitales"""
     if request.method == 'POST':
         form = ControlEndocrinoForm(request.POST)
         if form.is_valid():
             consulta = form.save(commit=False)
-            # consulta.usuario_registra_id = request.user.id # Opcional si amarraste el usuario
             consulta.save()
-            # Al guardar, devolvemos al usuario al historial de consultas
             return redirect('lista_consultas') 
     else:
+        # Cuando entras por primera vez (GET), se ejecuta esto:
         form = ControlEndocrinoForm()
     
+    # Confirma que la ruta del archivo HTML aquí esté bien escrita:
     return render(request, 'gestion_cdi/crear_control_endocrino.html', {'form': form})
+
+@login_required
+def crear_ruta_materna(request):
+    """Vista para el formulario de Ruta Materna"""
+    if request.method == 'POST':
+        form = RutaMaternaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_consultas')
+    else:
+        form = RutaMaternaForm()
+    return render(request, 'gestion_cdi/crear_ruta_materna.html', {'form': form})
+
+@login_required
+def crear_planificacion_familiar(request):
+    """Vista para el formulario de Planificación Familiar"""
+    if request.method == 'POST':
+        form = PlanificacionFamiliarForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_consultas')
+    else:
+        form = PlanificacionFamiliarForm()
+    return render(request, 'gestion_cdi/crear_planificacion_familiar.html', {'form': form})

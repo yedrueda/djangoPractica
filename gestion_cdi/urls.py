@@ -33,7 +33,21 @@ urlpatterns = [
     path('consultas/nueva/', views.crear_consulta, name='crear_consulta'),
     path('consultas/editar/<int:id>/', views.editar_consulta, name='editar_consulta'),
     path('consultas/borrar/<int:id>/', views.borrar_consulta, name='borrar_consulta'),
-    # MÓDULO CLÍNICO
+   
+    
+    # ==========================================
+    # MÓDULO CLÍNICO Y PROGRAMAS DE SALUD
+    # ==========================================
+    
+    # 1. Sala de Triaje (El menú de los 3 botones)
     path('consultas/seleccionar-programa/', views.seleccionar_programa, name='seleccionar_programa'),
+    
+    # 2. Formulario de Control Endocrino
     path('consultas/endocrino/nuevo/', views.crear_control_endocrino, name='crear_control_endocrino'),
-]
+    
+    # 3. Formulario de Ruta Materna (ESTE ES EL QUE FALTA)
+    path('consultas/ruta-materna/nuevo/', views.crear_ruta_materna, name='crear_ruta_materna'),
+    
+    # 4. Formulario de Planificación Familiar
+    path('consultas/planificacion/nuevo/', views.crear_planificacion_familiar, name='crear_planificacion_familiar'),
+]   

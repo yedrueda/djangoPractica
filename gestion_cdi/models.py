@@ -76,21 +76,39 @@ class RutaMaterna(models.Model):
     eje = models.CharField(max_length=100)
     direccion_detallada = models.TextField(null=True, blank=True)
     atendido_por = models.ForeignKey(PersonalCDI, on_delete=models.SET_NULL, null=True)
+    observaciones = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Ruta Materna"
 
 class PlanificacionFamiliar(models.Model):
+    # Relación con el paciente
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     fecha_atencion = models.DateField(auto_now_add=True)
-    SUCESIVA = [('Primera', 'Primera'), ('Sucesiva', 'Sucesiva')]
-    primera_sucesiva = models.CharField(max_length=20, choices=SUCESIVA)
-    metodo_entregado = models.CharField(max_length=100)
+    
+    # 1. Control Operativo Regional
+    semana = models.IntegerField(null=True, blank=True, verbose_name="Semana Epidemiológica")
+    primera_sucesiva = models.CharField(max_length=20, default='Primera')
+    establecimiento_salud = models.CharField(max_length=100, default='CDI El Llanito')
+    municipio = models.CharField(max_length=100, default='Sucre')
+    
+    # 2. Métodos de Barrera / Anticonceptivos
     preservativo_masculino = models.IntegerField(default=0)
-    atendido_por = models.ForeignKey(PersonalCDI, on_delete=models.SET_NULL, null=True)
+    metodo_entregado = models.CharField(max_length=100, null=True, blank=True)
+    diu = models.CharField(max_length=20, default='No')
+    implante = models.CharField(max_length=20, default='No')
+    
+    # 3. Diagnóstico e Historial
+    antecedente_obstetrico = models.TextField(null=True, blank=True)
+    observaciones = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"Planificación Familiar - {self.paciente.nombre} {self.paciente.apellido}"
 
     class Meta:
         verbose_name_plural = "Planificación Familiar"
+
+
 
 class ControlEndocrino(models.Model):
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='controles')

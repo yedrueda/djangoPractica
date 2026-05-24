@@ -1,5 +1,5 @@
 from django import forms
-from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino
+from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, RutaMaterna, PlanificacionFamiliar
 
 from django import forms
 from .models import Paciente
@@ -101,4 +101,67 @@ class ControlEndocrinoForm(forms.ModelForm):
             'glucemia_ayunas': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 95'}),
             'diagnostico': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'tratamiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+# Asegúrate de que las clases del modelo estén importadas arriba. 
+# Si no lo están, agrégalas a tu línea de importación actual de models:
+# from .models import Paciente, PersonalCDI, InventarioEquipos, ControlEndocrino, RutaMaterna, PlanificacionFamiliar
+
+class RutaMaternaForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(RutaMaternaForm, self).__init__(*args, **kwargs)
+        self.fields['paciente'].label_from_instance = lambda obj: f"{obj.tipo_cedula}-{obj.cedula} | {obj.nombre} {obj.apellido}"
+
+    class Meta:
+        model = RutaMaterna
+        fields = ['paciente', 'semanas_embarazo', 'eje', 'direccion_detallada', 'observaciones']
+        labels = {
+            'paciente': 'Seleccione la Paciente Gestante',
+            'semanas_embarazo': 'Semanas de Gestación',
+            'eje': 'Eje Comunitario / Sector',
+            'direccion_detallada': 'Dirección Detallada',
+            'observaciones': 'Observaciones Clínicas',
+        }
+        widgets = {
+            'paciente': forms.Select(attrs={'class': 'form-select'}),
+            'semanas_embarazo': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 12'}),
+            'eje': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion_detallada': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class PlanificacionFamiliarForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(PlanificacionFamiliarForm, self).__init__(*args, **kwargs)
+        self.fields['paciente'].label_from_instance = lambda obj: f"{obj.tipo_cedula}-{obj.cedula} | {obj.nombre} {obj.apellido}"
+
+    class Meta:
+        model = PlanificacionFamiliar
+        fields = ['paciente', 'semana', 'primera_sucesiva', 'establecimiento_salud', 'municipio', 
+                  'antecedente_obstetrico', 'preservativo_masculino', 'metodo_entregado', 'diu', 'implante', 'observaciones']
+        labels = {
+            'paciente': 'Seleccione el/la Paciente',
+            'semana': 'Semana Epidemiológica',
+            'primera_sucesiva': 'Tipo de Consulta',
+            'establecimiento_salud': 'Establecimiento de Salud Base',
+            'municipio': 'Municipio',
+            'antecedente_obstetrico': 'Antecedentes Obstétricos relevantes',
+            'preservativo_masculino': 'Cantidad de Preservativos Entregados',
+            'metodo_entregado': 'Método Anticonceptivo',
+            'diu': 'Colocación de DIU',
+            'implante': 'Colocación de Implante',
+            'observaciones': 'Notas del Caso',
+        }
+        widgets = {
+            'paciente': forms.Select(attrs={'class': 'form-select'}),
+            'semana': forms.NumberInput(attrs={'class': 'form-control'}),
+            'primera_sucesiva': forms.Select(choices=[('Primera', 'Primera Vez'), ('Sucesiva', 'Sucesiva')], attrs={'class': 'form-select'}),
+            'establecimiento_salud': forms.TextInput(attrs={'class': 'form-control'}),
+            'municipio': forms.TextInput(attrs={'class': 'form-control'}),
+            'antecedente_obstetrico': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'preservativo_masculino': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'metodo_entregado': forms.TextInput(attrs={'class': 'form-control'}),
+            'diu': forms.Select(choices=[('No', 'No'), ('Colocado', 'Colocado'), ('Control', 'Control')], attrs={'class': 'form-select'}),
+            'implante': forms.Select(choices=[('No', 'No'), ('Colocado', 'Colocado'), ('Control', 'Control')], attrs={'class': 'form-select'}),
+            'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
