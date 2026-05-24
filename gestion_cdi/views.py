@@ -180,3 +180,25 @@ def borrar_consulta(request, id):
         consulta.delete()
         return redirect('lista_consultas')
     return render(request, 'gestion_cdi/borrar_consulta.html', {'consulta': consulta})
+
+
+@login_required
+def seleccionar_programa(request):
+    """Vista para la sala de triaje virtual (menú de los 3 botones)"""
+    return render(request, 'gestion_cdi/seleccionar_programa.html')
+
+@login_required
+def crear_control_endocrino(request):
+    """Vista para el formulario de evaluación de signos vitales"""
+    if request.method == 'POST':
+        form = ControlEndocrinoForm(request.POST)
+        if form.is_valid():
+            consulta = form.save(commit=False)
+            # consulta.usuario_registra_id = request.user.id # Opcional si amarraste el usuario
+            consulta.save()
+            # Al guardar, devolvemos al usuario al historial de consultas
+            return redirect('lista_consultas') 
+    else:
+        form = ControlEndocrinoForm()
+    
+    return render(request, 'gestion_cdi/crear_control_endocrino.html', {'form': form})

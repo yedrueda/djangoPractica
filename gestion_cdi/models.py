@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date
 
 # --- 1. EJE DE PERSONAL ---
 class PersonalCDI(models.Model):
@@ -39,6 +40,15 @@ class Paciente(models.Model):
     asic = models.CharField(max_length=100, verbose_name="ASIC")
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def edad(self):
+        if self.fecha_nacimiento:
+            hoy = date.today()
+            # La fórmula matemática para calcular años exactos
+            edad_calculada = hoy.year - self.fecha_nacimiento.year - ((hoy.month, hoy.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day))
+            return f"{edad_calculada} años"
+        return "Sin registro"
+    
     def __str__(self):
         return f"{self.cedula} - {self.nombre} {self.apellido}"
 

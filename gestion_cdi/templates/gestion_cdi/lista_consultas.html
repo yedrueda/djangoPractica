@@ -2,8 +2,14 @@
 {% block titulo %}Historial de Consultas{% endblock %}
 {% block contenido %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Historial Médico y Signos Vitales</h2>
-    <a href="{% url 'crear_consulta' %}" class="btn btn-success fw-bold">+ Registrar Consulta</a>
+    <div>
+        <h3 class="mb-0 text-dark fw-bold">Historial de Consultas</h3>
+        <p class="text-muted small mb-0">Registro y trazabilidad de evaluaciones médicas</p>
+    </div>
+    
+    <a href="{% url 'seleccionar_programa' %}" class="btn btn-primary btn-sm px-3 shadow-sm" style="background-color: var(--accent-blue); border: none;">
+        <i class="fa-solid fa-plus me-2"></i>Nueva Evaluación
+    </a>
 </div>
 
 <div class="card shadow-sm border-0">

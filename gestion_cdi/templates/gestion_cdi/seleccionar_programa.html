@@ -1,0 +1,63 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Nueva Evaluación - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-0 text-dark fw-bold">Nueva Evaluación Médica</h3>
+        <p class="text-muted small mb-0">Seleccione el programa de salud al que ingresará el paciente</p>
+    </div>
+    <a href="{% url 'lista_consultas' %}" class="btn btn-light border shadow-sm text-muted">
+        <i class="fa-solid fa-arrow-left me-2"></i>Volver al Historial
+    </a>
+</div>
+
+<div class="row g-4 mt-2 justify-content-center">
+    
+    <div class="col-md-4">
+        <div class="card h-100 text-center shadow-sm" style="border-top: 5px solid var(--accent-blue); transition: transform 0.2s;">
+            <div class="card-body p-5">
+                <div class="rounded-circle d-inline-flex justify-content-center align-items-center mb-4" style="width: 80px; height: 80px; background-color: rgba(0, 151, 230, 0.1); color: var(--accent-blue);">
+                    <i class="fa-solid fa-stethoscope fa-2x"></i>
+                </div>
+                <h4 class="fw-bold text-dark">Control Endocrino</h4>
+                <p class="text-muted small mb-4">Evaluación de signos vitales, hipertensión, diabetes y medicina general.</p>
+                <a href="#" class="btn w-100 fw-bold" style="background-color: rgba(0, 151, 230, 0.1); color: var(--accent-blue);">
+                    Ingresar Paciente
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 text-center shadow-sm" style="border-top: 5px solid #e84393; transition: transform 0.2s;">
+            <div class="card-body p-5">
+                <div class="rounded-circle d-inline-flex justify-content-center align-items-center mb-4" style="width: 80px; height: 80px; background-color: rgba(232, 67, 147, 0.1); color: #e84393;">
+                    <i class="fa-solid fa-person-pregnant fa-2x"></i>
+                </div>
+                <h4 class="fw-bold text-dark">Ruta Materna</h4>
+                <p class="text-muted small mb-4">Control prenatal, seguimiento de semanas de gestación y evaluación obstétrica.</p>
+                <a href="#" class="btn w-100 fw-bold" style="background-color: rgba(232, 67, 147, 0.1); color: #e84393;">
+                    Ingresar Paciente
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 text-center shadow-sm" style="border-top: 5px solid var(--accent-green); transition: transform 0.2s;">
+            <div class="card-body p-5">
+                <div class="rounded-circle d-inline-flex justify-content-center align-items-center mb-4" style="width: 80px; height: 80px; background-color: rgba(76, 209, 55, 0.1); color: var(--accent-green);">
+                    <i class="fa-solid fa-hand-holding-medical fa-2x"></i>
+                </div>
+                <h4 class="fw-bold text-dark">Planificación Familiar</h4>
+                <p class="text-muted small mb-4">Salud sexual, control ginecológico y entrega de métodos anticonceptivos.</p>
+                <a href="#" class="btn w-100 fw-bold" style="background-color: rgba(76, 209, 55, 0.1); color: var(--accent-green);">
+                    Ingresar Paciente
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,45 +1,92 @@
 {% extends 'gestion_cdi/base.html' %}
-
-{% block titulo %}Nuevo Paciente{% endblock %}
+{% block titulo %}Registrar Paciente - SIGE{% endblock %}
 
 {% block contenido %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow border-0">
-            <div class="card-header bg-success text-white">
-                <h4 class="mb-0">Registrar Nuevo Paciente</h4>
-            </div>
-            <div class="card-body bg-white p-4">
-                <form method="post">
-    {% csrf_token %}
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label text-muted fw-bold">Cédula de Identidad</label>
-            <div class="input-group">
-                {{ form.tipo_cedula }}
-                {{ form.cedula }}
-            </div>
-            {% if form.cedula.errors %}<small class="text-danger">{{ form.cedula.errors }}</small>{% endif %}
-        </div>
-
-        {% for field in form %}
-            {% if field.name != 'cedula' and field.name != 'tipo_cedula' %}
-                <div class="col-md-6 mb-3">
-                    <label class="form-label text-muted fw-bold">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}<small class="text-danger">{{ field.errors }}</small>{% endif %}
+<div class="card shadow-sm max-width-700 mx-auto">
+    <div class="card-header bg-white py-3">
+        <h5 class="m-0 fw-bold text-dark"><i class="fa-solid fa-user-plus me-2" style="color: var(--accent-blue);"></i> Registro de Paciente</h5>
+    </div>
+    <div class="card-body p-4">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold">Documento de Identidad</label>
+                    <div class="input-group">
+                        {{ form.tipo_cedula }}
+                        {{ form.cedula }}
+                    </div>
                 </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-    
-    <div class="mt-4 text-end">
-        <a href="{% url 'lista_pacientes' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
-        <button type="submit" class="btn btn-success">Guardar Registro</button>
-    </div>
-</form>
+
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold">Sexo</label>
+                    {{ form.sexo }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold">Nombres</label>
+                    {{ form.nombre }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold">Apellidos</label>
+                    {{ form.apellido }}
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold">Fecha de Nacimiento</label>
+                    {{ form.fecha_nacimiento }}
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold">Edad Calculada</label>
+                    <input type="text" id="id_edad_calculada" class="form-control" readonly placeholder="Se calculará automáticamente..." style="background-color: #e9ecef; font-weight: bold; color: var(--text-dark);">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold">Teléfono</label>
+                    {{ form.telefono }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold">Dirección</label>
+                    {{ form.direccion }}
+                </div>
             </div>
-        </div>
+
+            <div class="mt-4 text-end">
+                <a href="{% url 'lista_pacientes' %}" class="btn btn-light me-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary px-4" style="background-color: var(--accent-blue); border: none;">Guardar Paciente</button>
+            </div>
+        </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputFecha = document.getElementById('id_fecha_nacimiento');
+        const inputEdad = document.getElementById('id_edad_calculada');
+
+        function calcularEdad(fechaString) {
+            if (!fechaString) return '';
+            const hoy = new Date();
+            const fechaNac = new Date(fechaString);
+            let edad = hoy.getFullYear() - fechaNac.getFullYear();
+            const diferenciaMeses = hoy.getMonth() - fechaNac.getMonth();
+            
+            if (diferenciaMeses < 0 || (diferenciaMeses === 0 && hoy.getDate() < fechaNac.getDate())) {
+                edad--;
+            }
+            return edad >= 0 ? edad + " años" : "Fecha inválida";
+        }
+
+        if (inputFecha) {
+            inputFecha.addEventListener('change', function() {
+                inputEdad.value = calcularEdad(this.value);
+            });
+            if (inputFecha.value) {
+                inputEdad.value = calcularEdad(inputFecha.value);
+            }
+        }
+    });
+</script>
 {% endblock %}

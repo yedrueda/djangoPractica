@@ -33,4 +33,7 @@ urlpatterns = [
     path('consultas/nueva/', views.crear_consulta, name='crear_consulta'),
     path('consultas/editar/<int:id>/', views.editar_consulta, name='editar_consulta'),
     path('consultas/borrar/<int:id>/', views.borrar_consulta, name='borrar_consulta'),
+    # MÓDULO CLÍNICO
+    path('consultas/seleccionar-programa/', views.seleccionar_programa, name='seleccionar_programa'),
+    path('consultas/endocrino/nuevo/', views.crear_control_endocrino, name='crear_control_endocrino'),
 ]
