@@ -111,20 +111,22 @@ class PlanificacionFamiliar(models.Model):
 
 
 class ControlEndocrino(models.Model):
+    # Identificación
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     fecha_atencion = models.DateField(auto_now_add=True)
     sede_tratamiento = models.CharField(max_length=150, default="CDI El Llanito")
-    
-    # Signos Vitales y Antropometría
+    pas = models.CharField(max_length=10, choices=[('Primera', 'Primera'), ('Sucesiva', 'Sucesiva')], default='Primera', verbose_name="P.A.S.")
+
+    # Signos Vitales
     tension_arterial = models.CharField(max_length=20, null=True, blank=True)
     frecuencia_cardiaca = models.IntegerField(null=True, blank=True)
     frecuencia_respiratoria = models.IntegerField(null=True, blank=True)
     temperatura = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
     peso_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     talla_cm = models.IntegerField(null=True, blank=True)
+    glucemia_ayunas = models.IntegerField(null=True, blank=True)
     
     # Laboratorios
-    glucemia_ayunas = models.IntegerField(null=True, blank=True)
     hba1c = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
     creatinina = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     urea = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
@@ -133,7 +135,7 @@ class ControlEndocrino(models.Model):
     colesterol_total = models.IntegerField(null=True, blank=True)
     trigliceridos = models.IntegerField(null=True, blank=True)
 
-    # Control Operativo (9 Patologías)
+    # Patologías (9 Checkboxes)
     asociacion_cv = models.BooleanField(default=False)
     insulina = models.BooleanField(default=False)
     enfermedad_renal_cronica = models.BooleanField(default=False)
@@ -144,8 +146,7 @@ class ControlEndocrino(models.Model):
     pie_diabetico = models.BooleanField(default=False)
     dislipidemia = models.BooleanField(default=False)
     
-    # Resolución y Tratamiento
-    pas = models.CharField(max_length=10, choices=[('Primera', 'Primera'), ('Sucesiva', 'Sucesiva')], default='Primera')
+    # Resolución
     medicamentos_entregados = models.TextField(null=True, blank=True)
     referencia = models.CharField(max_length=200, null=True, blank=True)
     conducta = models.TextField(null=True, blank=True)
@@ -156,7 +157,7 @@ class ControlEndocrino(models.Model):
     observaciones_finales = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"Consulta: {self.paciente.nombre} {self.paciente.apellido} - {self.fecha_atencion}"
+        return f"Control Endocrino - {self.paciente.nombre} {self.paciente.apellido} ({self.fecha_atencion})"
 
 
 # --- 4. EJE INFRAESTRUCTURA E INVENTARIO ---

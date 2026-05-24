@@ -5,10 +5,10 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h3 class="mb-0 text-dark fw-bold">Evaluación Endocrino - Metabólica</h3>
-        <p class="text-muted small mb-0">Registro detallado de control médico</p>
+        <p class="text-muted small mb-0">Formulario completo de registro clínico</p>
     </div>
-    <a href="{% url 'seleccionar_programa' %}" class="btn btn-light border shadow-sm text-muted">
-        <i class="fa-solid fa-arrow-left me-2"></i>Volver a Programas
+    <a href="{% url 'lista_consultas' %}" class="btn btn-light border shadow-sm text-muted">
+        <i class="fa-solid fa-arrow-left me-2"></i>Volver al Historial
     </a>
 </div>
 
@@ -39,10 +39,24 @@
             <div class="row g-3 mb-4 bg-light p-3 rounded border mx-0">
                 {% for field in form %}
                     {% if field.field.widget.input_type == 'checkbox' %}
-                        <div class="col-md-4">
-                            <div class="form-check form-switch">
-                                {{ field }} <label class="form-check-label small fw-bold">{{ field.label }}</label>
+                        <div class="col-md-4 mb-2">
+                            <div class="form-check form-switch fs-6">
+                                {{ field }} <label class="form-check-label fw-bold mt-1 ms-1">{{ field.label }}</label>
                             </div>
+                            
+                            {% if field.name == 'diabetes_mellitus' %}
+                            <div id="contenedor_diabetes" class="mt-2 ps-4" style="display: none;">
+                                <label class="small text-muted mb-1">Especifique Tipo:</label>
+                                {{ form.tipo_diabetes }}
+                            </div>
+                            {% endif %}
+
+                            {% if field.name == 'enfermedad_renal_cronica' %}
+                            <div id="contenedor_renal" class="mt-2 ps-4" style="display: none;">
+                                <label class="small text-muted mb-1">Especifique Estadio:</label>
+                                {{ form.estadio_renal }}
+                            </div>
+                            {% endif %}
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -72,7 +86,7 @@
 
             <div class="mt-5 text-end">
                 <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" style="background-color: var(--accent-blue);">
-                    <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Evaluación
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Evaluación Completa
                 </button>
             </div>
         </form>
@@ -81,9 +95,42 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // 1. Buscador TomSelect
         const selectPaciente = document.getElementById('id_paciente');
         if (selectPaciente) {
-            new TomSelect(selectPaciente, { create: false, sortField: { field: "text", direction: "asc" }, searchField: ['text'] });
+            new TomSelect(selectPaciente, { 
+                create: false, 
+                sortField: { field: "text", direction: "asc" }, 
+                searchField: ['text'] 
+            });
+        }
+
+        // 2. Lógica de Desplegables (Campos Dinámicos)
+        
+        // Elementos de Diabetes
+        const checkDiabetes = document.getElementById('id_diabetes_mellitus');
+        const contDiabetes = document.getElementById('contenedor_diabetes');
+        
+        if (checkDiabetes && contDiabetes) {
+            // Estado inicial al cargar
+            contDiabetes.style.display = checkDiabetes.checked ? 'block' : 'none';
+            // Escuchar el click (switch)
+            checkDiabetes.addEventListener('change', function() {
+                contDiabetes.style.display = this.checked ? 'block' : 'none';
+            });
+        }
+
+        // Elementos de Enfermedad Renal
+        const checkRenal = document.getElementById('id_enfermedad_renal_cronica');
+        const contRenal = document.getElementById('contenedor_renal');
+        
+        if (checkRenal && contRenal) {
+            // Estado inicial al cargar
+            contRenal.style.display = checkRenal.checked ? 'block' : 'none';
+            // Escuchar el click (switch)
+            checkRenal.addEventListener('change', function() {
+                contRenal.style.display = this.checked ? 'block' : 'none';
+            });
         }
     });
 </script>

@@ -69,59 +69,15 @@ class InventarioEquipoForm(forms.ModelForm):
         }
 
 class ControlEndocrinoForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(ControlEndocrinoForm, self).__init__(*args, **kwargs)
-        # Formato del buscador de paciente
-        self.fields['paciente'].label_from_instance = lambda obj: f"{obj.tipo_cedula}-{obj.cedula} | {obj.nombre} {obj.apellido}"
-
     class Meta:
         model = ControlEndocrino
-        fields = [
-            'paciente', 'sede_tratamiento', 'pas', 'tension_arterial', 'frecuencia_cardiaca', 
-            'frecuencia_respiratoria', 'temperatura', 'peso_kg', 'talla_cm', 'glucemia_ayunas', 
-            'hba1c', 'creatinina', 'urea', 'tgo', 'tgp', 'colesterol_total', 'trigliceridos',
-            'asociacion_cv', 'insulina', 'enfermedad_renal_cronica', 'obesidad', 
-            'diabetes_mellitus', 'enf_tiroidea', 'sobre_peso', 'pie_diabetico', 
-            'dislipidemia', 'medicamentos_entregados', 'referencia', 'conducta', 
-            'diagnostico', 'tratamiento', 'otras_patologias', 'alergias', 'observaciones_finales'
-        ]
-        
-        labels = {
-            'paciente': 'Paciente',
-            'sede_tratamiento': 'Sede de Tratamiento',
-            'pas': 'Tipo de Consulta (P.A.S)',
-            'tension_arterial': 'Tensión Arterial (mmHg)',
-            'frecuencia_cardiaca': 'Frecuencia Cardíaca (lpm)',
-            'frecuencia_respiratoria': 'Frecuencia Respiratoria (rpm)',
-            'temperatura': 'Temperatura (°C)',
-            'peso_kg': 'Peso (Kg)',
-            'talla_cm': 'Talla (cm)',
-            'glucemia_ayunas': 'Glicemia Ayunas (mg/dL)',
-            'hba1c': 'HbA1c (%)',
-            'creatinina': 'Creatinina (mg/dL)',
-            'urea': 'Urea (mg/dL)',
-            'tgo': 'TGO (U/L)',
-            'tgp': 'TGP (U/L)',
-            'colesterol_total': 'Colesterol Total (mg/dL)',
-            'trigliceridos': 'Triglicéridos (mg/dL)',
-            'medicamentos_entregados': 'Medicamentos Entregados',
-            'referencia': 'Referencia',
-            'conducta': 'Conducta Médica',
-            'diagnostico': 'Diagnóstico',
-            'tratamiento': 'Tratamiento e Indicaciones',
-            'otras_patologias': 'Otras Patologías',
-            'alergias': 'Alergias',
-            'observaciones_finales': 'Observaciones Finales'
-        }
-        
+        exclude = ['fecha_atencion'] # La fecha es automática
         widgets = {
-            # Selección y Texto
             'paciente': forms.Select(attrs={'class': 'form-select'}),
             'sede_tratamiento': forms.TextInput(attrs={'class': 'form-control'}),
             'pas': forms.Select(attrs={'class': 'form-select'}),
-            
             # Signos Vitales y Labs
-            'tension_arterial': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 120/80'}),
+            'tension_arterial': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '120/80'}),
             'frecuencia_cardiaca': forms.NumberInput(attrs={'class': 'form-control'}),
             'frecuencia_respiratoria': forms.NumberInput(attrs={'class': 'form-control'}),
             'temperatura': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
@@ -130,23 +86,21 @@ class ControlEndocrinoForm(forms.ModelForm):
             'glucemia_ayunas': forms.NumberInput(attrs={'class': 'form-control'}),
             'hba1c': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
             'creatinina': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'urea': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
+            'urea': forms.NumberInput(attrs={'class': 'form-control'}),
             'tgo': forms.NumberInput(attrs={'class': 'form-control'}),
             'tgp': forms.NumberInput(attrs={'class': 'form-control'}),
             'colesterol_total': forms.NumberInput(attrs={'class': 'form-control'}),
             'trigliceridos': forms.NumberInput(attrs={'class': 'form-control'}),
-            
-            # Textareas
+            # TextAreas
             'medicamentos_entregados': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'referencia': forms.TextInput(attrs={'class': 'form-control'}),
-            'conducta': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'diagnostico': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'tratamiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'conducta': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'otras_patologias': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'alergias': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'observaciones_finales': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            
-            # Checkboxes (Patologías)
+            'referencia': forms.TextInput(attrs={'class': 'form-control'}),
+            # Checkboxes
             'asociacion_cv': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'insulina': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'enfermedad_renal_cronica': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
