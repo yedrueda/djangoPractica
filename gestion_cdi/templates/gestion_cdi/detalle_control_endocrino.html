@@ -1,0 +1,133 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Hoja Médica - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4 no-print">
+    <div>
+        <h3 class="mb-0 text-dark fw-bold">Detalle de Evaluación Médica</h3>
+        <p class="text-muted small mb-0">ID de Registro: #{{ consulta.id }} | Fecha: {{ consulta.fecha_atencion|date:"d/m/Y" }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button onclick="window.print();" class="btn btn-light border shadow-sm text-muted">
+            <i class="fa-solid fa-print me-2"></i>Imprimir Reporte
+        </button>
+        <a href="{% url 'lista_consultas' %}" class="btn btn-primary shadow-sm" style="background-color: var(--accent-blue); border: none;">
+            <i class="fa-solid fa-arrow-left me-2"></i>Volver al Historial
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 max-width-900 mx-auto border-top-main">
+    <div class="card-body p-4 p-md-5">
+        
+        <div class="text-center mb-5">
+            <h5 class="fw-bold text-uppercase text-dark mb-1">Sistema de Gestión Integral de Salud</h5>
+            <h6 class="text-muted text-uppercase small mb-3">Centro de Diagnóstico Integral (CDI)</h6>
+            <div class="border-bottom mx-auto" style="width: 80px; border-width: 2px !important; border-color: var(--accent-blue) !important;"></div>
+        </div>
+
+        <h6 class="fw-bold text-uppercase mb-3 text-secondary" style="letter-spacing: 0.5px;">
+            <i class="fa-solid fa-id-card me-2 text-primary"></i> 1. Información del Paciente
+        </h6>
+        <div class="row g-3 bg-light p-3 rounded border mb-4">
+            <div class="col-md-6">
+                <span class="text-muted small d-block">Nombre Completo:</span>
+                <strong class="text-dark fs-5">{{ consulta.paciente.nombre }} {{ consulta.paciente.apellido }}</strong>
+            </div>
+            <div class="col-md-6">
+                <span class="text-muted small d-block">Documento de Identidad:</span>
+                <strong class="text-dark fs-5">C.I: {{ consulta.paciente.tipo_cedula }}-{{ consulta.paciente.cedula }}</strong>
+            </div>
+        </div>
+
+        <h6 class="fw-bold text-uppercase mb-3 text-secondary" style="letter-spacing: 0.5px;">
+            <i class="fa-solid fa-heart-pulse me-2 text-danger"></i> 2. Constantes Vitales y Antropometría
+        </h6>
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">Tensión Arterial</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.tension_arterial|default:"--" }}</span> <span class="text-muted small">mmHg</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">Fr. Cardíaca</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.frecuencia_cardiaca|default:"--" }}</span> <span class="text-muted small">lpm</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">Fr. Respiratoria</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.frecuencia_respiratoria|default:"--" }}</span> <span class="text-muted small">rpm</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">Temperatura</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.temperatura|default:"--" }}</span> <span class="text-muted small">°C</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">Peso Corporal</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.peso_kg|default:"--" }}</span> <span class="text-muted small">Kg</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">Talla / Estatura</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.talla_cm|default:"--" }}</span> <span class="text-muted small">cm</span>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">Glicemia en Ayunas</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.glucemia_ayunas|default:"--" }}</span> <span class="text-muted small">mg/dL</span>
+                </div>
+            </div>
+        </div>
+
+        <h6 class="fw-bold text-uppercase mb-3 text-secondary" style="letter-spacing: 0.5px;">
+            <i class="fa-solid fa-notes-medical me-2 text-info"></i> 3. Criterio Médico y Diagnóstico
+        </h6>
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="p-3 border rounded bg-white">
+                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Diagnóstico Médico Preliminar:</span>
+                    <p class="mb-0 text-dark text-justify" style="white-space: pre-line;">{{ consulta.diagnostico|default:"No se registraron detalles diagnósticos." }}</p>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="p-3 border rounded bg-white">
+                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Indicaciones Terapéuticas y Tratamiento:</span>
+                    <p class="mb-0 text-dark text-justify" style="white-space: pre-line;">{{ consulta.tratamiento|default:"No se registraron indicaciones de tratamiento." }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .border-top-main {
+        border-top: 6px solid var(--accent-blue) !important;
+    }
+    .text-justify {
+        text-align: justify;
+    }
+    @media print {
+        .no-print, .sidebar, .navbar, .btn, footer {
+            display: none !important;
+        }
+        .container-fluid, .main-content {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .card {
+            box-shadow: none !important;
+            border: none !important;
+        }
+    }
+</style>
+{% endblock %}

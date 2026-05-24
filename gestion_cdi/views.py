@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q # Para búsquedas avanzadas
 from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino
 from .forms import PacienteForm, PersonalCDIForm, InventarioEquipoForm, ControlEndocrinoForm,RutaMaternaForm, PlanificacionFamiliarForm
 
@@ -12,7 +13,7 @@ def inicio(request):
     total_pacientes = Paciente.objects.count()
     total_personal = PersonalCDI.objects.count()
     total_equipos = InventarioEquipo.objects.count()
-    total_consultas = ControlEndocrino.objects.count() # <-- NUEVA LÍNEA: Contamos las consultas
+    total_consultas = ControlEndocrino.objects.count() 
 
     contexto = {
         'total_pacientes': total_pacientes,
@@ -202,6 +203,35 @@ def crear_control_endocrino(request):
     # Confirma que la ruta del archivo HTML aquí esté bien escrita:
     return render(request, 'gestion_cdi/crear_control_endocrino.html', {'form': form})
 
+# 1. VER DETALLES (LA HOJA MÉDICA)
+@login_required
+def detalle_control_endocrino(request, pk):
+    consulta = get_object_or_404(ControlEndocrino, pk=pk)
+    return render(request, 'gestion_cdi/detalle_control_endocrino.html', {'consulta': consulta})
+
+# 2. EDITAR CONSULTA
+@login_required
+def editar_control_endocrino(request, pk):
+    consulta = get_object_or_404(ControlEndocrino, pk=pk)
+    if request.method == 'POST':
+        form = ControlEndocrinoForm(request.POST, instance=consulta)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_consultas')
+    else:
+        form = ControlEndocrinoForm(instance=consulta)
+    
+    # Reutilizamos la misma plantilla de creación, pasándole el formulario lleno
+    return render(request, 'gestion_cdi/crear_control_endocrino.html', {'form': form, 'editando': True})
+
+# 3. ELIMINAR CONSULTA
+@login_required
+def eliminar_control_endocrino(request, pk):
+    consulta = get_object_or_404(ControlEndocrino, pk=pk)
+    # Al procesar la confirmación nativa de JS del paso 1, borramos directamente
+    consulta.delete()
+    return redirect('lista_consultas')
+
 @login_required
 def crear_ruta_materna(request):
     """Vista para el formulario de Ruta Materna"""
@@ -225,3 +255,26 @@ def crear_planificacion_familiar(request):
     else:
         form = PlanificacionFamiliarForm()
     return render(request, 'gestion_cdi/crear_planificacion_familiar.html', {'form': form})
+
+@login_required
+def lista_consultas(request):
+    # 1. Capturamos el parámetro 'buscar' enviado desde el formulario HTML
+    busqueda = request.GET.get('buscar', '')
+    
+    # 2. Obtenemos todas las consultas ordenadas de la más reciente a la más antigua
+    consultas = ControlEndocrino.objects.all().order_by('-fecha_atencion')
+    
+    # 3. Si el usuario escribió algo, filtramos por Cédula, Nombre o Apellido del paciente
+    if busqueda:
+        consultas = consultas.filter(
+            Q(paciente__cedula__icontains=busqueda) |
+            Q(paciente__nombre__icontains=busqueda) |
+            Q(paciente__apellido__icontains=busqueda)
+        )
+    
+    # 4. Pasamos las consultas filtradas y el término de búsqueda actual a la plantilla
+    return render(request, 'gestion_cdi/lista_consultas.html', {
+        'consultas': consultas,
+        'busqueda': busqueda
+    })
+

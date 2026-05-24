@@ -4,8 +4,8 @@
 {% block contenido %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h3 class="mb-0 text-dark fw-bold">Evaluación Médica General</h3>
-        <p class="text-muted small mb-0">Módulo de Control Endocrino y Signos Vitales</p>
+        <h3 class="mb-0 text-dark fw-bold">Evaluación Endocrino - Metabólica</h3>
+        <p class="text-muted small mb-0">Registro detallado de control médico</p>
     </div>
     <a href="{% url 'seleccionar_programa' %}" class="btn btn-light border shadow-sm text-muted">
         <i class="fa-solid fa-arrow-left me-2"></i>Volver a Programas
@@ -17,64 +17,61 @@
         <form method="post">
             {% csrf_token %}
             
-            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue); letter-spacing: 1px;"><i class="fa-solid fa-user me-2"></i> 1. Identificación del Paciente</h6>
-            <div class="row mb-4">
-                <div class="col-12">
-                    {{ form.paciente }}
-                </div>
-            </div>
-
-            <hr class="text-muted my-4">
-
-            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue); letter-spacing: 1px;"><i class="fa-solid fa-heart-pulse me-2"></i> 2. Signos Vitales y Antropometría</h6>
+            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-user me-2"></i> 1. Identificación</h6>
             <div class="row g-3 mb-4">
-                <div class="col-md-3">
-                    <label class="form-label text-muted small fw-bold">Tensión Arterial</label>
-                    {{ form.tension_arterial }}
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label text-muted small fw-bold">Frecuencia Cardíaca</label>
-                    {{ form.frecuencia_cardiaca }}
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label text-muted small fw-bold">Frecuencia Respiratoria</label>
-                    {{ form.frecuencia_respiratoria }}
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label text-muted small fw-bold">Temperatura (°C)</label>
-                    {{ form.temperatura }}
-                </div>
-                
-                <div class="col-md-4">
-                    <label class="form-label text-muted small fw-bold">Peso (Kg)</label>
-                    {{ form.peso_kg }}
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label text-muted small fw-bold">Talla (cm)</label>
-                    {{ form.talla_cm }}
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label text-muted small fw-bold">Glicemia (mg/dL)</label>
-                    {{ form.glucemia_ayunas }}
-                </div>
+                <div class="col-md-6">{{ form.paciente.label_tag }} {{ form.paciente }}</div>
+                <div class="col-md-3">{{ form.sede_tratamiento.label_tag }} {{ form.sede_tratamiento }}</div>
+                <div class="col-md-3">{{ form.pas.label_tag }} {{ form.pas }}</div>
             </div>
 
-            <hr class="text-muted my-4">
+            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-heart-pulse me-2"></i> 2. Signos Vitales</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">{{ form.tension_arterial.label_tag }} {{ form.tension_arterial }}</div>
+                <div class="col-md-3">{{ form.frecuencia_cardiaca.label_tag }} {{ form.frecuencia_cardiaca }}</div>
+                <div class="col-md-3">{{ form.frecuencia_respiratoria.label_tag }} {{ form.frecuencia_respiratoria }}</div>
+                <div class="col-md-3">{{ form.temperatura.label_tag }} {{ form.temperatura }}</div>
+                <div class="col-md-4">{{ form.peso_kg.label_tag }} {{ form.peso_kg }}</div>
+                <div class="col-md-4">{{ form.talla_cm.label_tag }} {{ form.talla_cm }}</div>
+                <div class="col-md-4">{{ form.glucemia_ayunas.label_tag }} {{ form.glucemia_ayunas }}</div>
+            </div>
 
-            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue); letter-spacing: 1px;"><i class="fa-solid fa-notes-medical me-2"></i> 3. Evaluación Clínica</h6>
+            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-clipboard-list me-2"></i> 3. Control Operativo Regional</h6>
+            <div class="row g-3 mb-4 bg-light p-3 rounded border mx-0">
+                {% for field in form %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="col-md-4">
+                            <div class="form-check form-switch">
+                                {{ field }} <label class="form-check-label small fw-bold">{{ field.label }}</label>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-vial me-2"></i> 4. Laboratorio Clínico</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-2">{{ form.hba1c.label_tag }} {{ form.hba1c }}</div>
+                <div class="col-md-2">{{ form.creatinina.label_tag }} {{ form.creatinina }}</div>
+                <div class="col-md-2">{{ form.urea.label_tag }} {{ form.urea }}</div>
+                <div class="col-md-2">{{ form.tgo.label_tag }} {{ form.tgo }}</div>
+                <div class="col-md-2">{{ form.tgp.label_tag }} {{ form.tgp }}</div>
+                <div class="col-md-2">{{ form.colesterol_total.label_tag }} {{ form.colesterol_total }}</div>
+                <div class="col-md-3">{{ form.trigliceridos.label_tag }} {{ form.trigliceridos }}</div>
+            </div>
+
+            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-notes-medical me-2"></i> 5. Conducta y Resolución</h6>
             <div class="row g-3">
-                <div class="col-md-12">
-                    <label class="form-label text-muted small fw-bold">Diagnóstico</label>
-                    {{ form.diagnostico }}
-                </div>
-                <div class="col-md-12">
-                    <label class="form-label text-muted small fw-bold">Tratamiento e Indicaciones</label>
-                    {{ form.tratamiento }}
-                </div>
+                <div class="col-md-6">{{ form.medicamentos_entregados.label_tag }} {{ form.medicamentos_entregados }}</div>
+                <div class="col-md-6">{{ form.referencia.label_tag }} {{ form.referencia }}</div>
+                <div class="col-md-12">{{ form.diagnostico.label_tag }} {{ form.diagnostico }}</div>
+                <div class="col-md-12">{{ form.tratamiento.label_tag }} {{ form.tratamiento }}</div>
+                <div class="col-md-4">{{ form.otras_patologias.label_tag }} {{ form.otras_patologias }}</div>
+                <div class="col-md-4">{{ form.alergias.label_tag }} {{ form.alergias }}</div>
+                <div class="col-md-4">{{ form.observaciones_finales.label_tag }} {{ form.observaciones_finales }}</div>
             </div>
 
-            <div class="mt-5 text-end bg-light p-3 rounded border">
-                <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" style="background-color: var(--accent-blue); border: none;">
+            <div class="mt-5 text-end">
+                <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" style="background-color: var(--accent-blue);">
                     <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Evaluación
                 </button>
             </div>
@@ -84,20 +81,9 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Apuntamos al campo de paciente generado por Django
         const selectPaciente = document.getElementById('id_paciente');
-        
         if (selectPaciente) {
-            new TomSelect(selectPaciente, {
-                create: false, // Evita que el usuario cree pacientes nuevos desde aquí
-                sortField: {
-                    field: "text",
-                    direction: "asc"
-                },
-                placeholder: "Escriba cédula, nombre o apellido...",
-                // Esta opción ayuda a que la búsqueda sea más precisa
-                searchField: ['text'],
-            });
+            new TomSelect(selectPaciente, { create: false, sortField: { field: "text", direction: "asc" }, searchField: ['text'] });
         }
     });
 </script>

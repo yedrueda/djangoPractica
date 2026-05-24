@@ -111,23 +111,49 @@ class PlanificacionFamiliar(models.Model):
 
 
 class ControlEndocrino(models.Model):
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='controles')
-    medico_tratante = models.ForeignKey(PersonalCDI, on_delete=models.SET_NULL, null=True)
-    
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     fecha_atencion = models.DateField(auto_now_add=True)
+    sede_tratamiento = models.CharField(max_length=150, default="CDI El Llanito")
     
-    # Signos Vitales (Ahora son opcionales con null=True, blank=True)
-    tension_arterial = models.CharField(max_length=10, null=True, blank=True, help_text="Ej: 120/80")
-    frecuencia_cardiaca = models.IntegerField(null=True, blank=True, help_text="LPM")
-    frecuencia_respiratoria = models.IntegerField(null=True, blank=True, help_text="RPM")
-    temperatura = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True, help_text="°C")
-    peso_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text="Kg")
-    talla_cm = models.IntegerField(null=True, blank=True, help_text="cm")
+    # Signos Vitales y Antropometría
+    tension_arterial = models.CharField(max_length=20, null=True, blank=True)
+    frecuencia_cardiaca = models.IntegerField(null=True, blank=True)
+    frecuencia_respiratoria = models.IntegerField(null=True, blank=True)
+    temperatura = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
+    peso_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    talla_cm = models.IntegerField(null=True, blank=True)
     
-    # Exámenes y Diagnóstico
-    glucemia_ayunas = models.IntegerField(null=True, blank=True, help_text="mg/dL")
+    # Laboratorios
+    glucemia_ayunas = models.IntegerField(null=True, blank=True)
+    hba1c = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
+    creatinina = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    urea = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    tgo = models.IntegerField(null=True, blank=True)
+    tgp = models.IntegerField(null=True, blank=True)
+    colesterol_total = models.IntegerField(null=True, blank=True)
+    trigliceridos = models.IntegerField(null=True, blank=True)
+
+    # Control Operativo (9 Patologías)
+    asociacion_cv = models.BooleanField(default=False)
+    insulina = models.BooleanField(default=False)
+    enfermedad_renal_cronica = models.BooleanField(default=False)
+    obesidad = models.BooleanField(default=False)
+    diabetes_mellitus = models.BooleanField(default=False)
+    enf_tiroidea = models.BooleanField(default=False)
+    sobre_peso = models.BooleanField(default=False)
+    pie_diabetico = models.BooleanField(default=False)
+    dislipidemia = models.BooleanField(default=False)
+    
+    # Resolución y Tratamiento
+    pas = models.CharField(max_length=10, choices=[('Primera', 'Primera'), ('Sucesiva', 'Sucesiva')], default='Primera')
+    medicamentos_entregados = models.TextField(null=True, blank=True)
+    referencia = models.CharField(max_length=200, null=True, blank=True)
+    conducta = models.TextField(null=True, blank=True)
     diagnostico = models.TextField(null=True, blank=True)
     tratamiento = models.TextField(null=True, blank=True)
+    otras_patologias = models.TextField(null=True, blank=True)
+    alergias = models.TextField(null=True, blank=True)
+    observaciones_finales = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"Consulta: {self.paciente.nombre} {self.paciente.apellido} - {self.fecha_atencion}"

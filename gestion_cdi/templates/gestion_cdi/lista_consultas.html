@@ -1,49 +1,110 @@
 {% extends 'gestion_cdi/base.html' %}
-{% block titulo %}Historial de Consultas{% endblock %}
+{% block titulo %}Historial Clínico - SIGE{% endblock %}
+
 {% block contenido %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h3 class="mb-0 text-dark fw-bold">Historial de Consultas</h3>
-        <p class="text-muted small mb-0">Registro y trazabilidad de evaluaciones médicas</p>
+        <h3 class="mb-0 text-dark fw-bold">Historial de Consultas Médicas</h3>
+        <p class="text-muted small mb-0">Registro general de evaluaciones y trazabilidad de pacientes</p>
     </div>
-    
     <a href="{% url 'seleccionar_programa' %}" class="btn btn-primary btn-sm px-3 shadow-sm" style="background-color: var(--accent-blue); border: none;">
         <i class="fa-solid fa-plus me-2"></i>Nueva Evaluación
     </a>
 </div>
 
+<div class="row mb-4">
+    <div class="col-md-6 col-lg-5">
+        <form method="get" action="{% url 'lista_consultas' %}" class="d-flex gap-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" name="buscar" class="form-control border-start-0 shadow-sm" 
+                       placeholder="Buscar por cédula, nombre o apellido..." value="{{ busqueda }}">
+            </div>
+            <button type="submit" class="btn btn-primary fw-bold px-4 shadow-sm" style="background-color: var(--accent-blue); border: none;">
+                Buscar
+            </button>
+            
+            {% if busqueda %}
+                <a href="{% url 'lista_consultas' %}" class="btn btn-light border fw-bold text-muted shadow-sm">
+                    Limpiar
+                </a>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
 <div class="card shadow-sm border-0">
-    <div class="card-body">
-        <table class="table table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>Fecha</th>
-                    <th>Paciente</th>
-                    <th>Presión / Temp</th>
-                    <th>Diagnóstico Principal</th>
-                    <th>Médico Tratante</th>
-                    <th>Acciones</th> </tr>
-            </thead>
-            <tbody>
-                {% for control in controles %}
-                <tr>
-                    <td>{{ control.fecha_atencion|date:"d/m/Y" }}</td>
-                    <td class="fw-bold">{{ control.paciente.nombre }} {{ control.paciente.apellido }}</td>
-                    <td>{{ control.tension_arterial }} <br><small class="text-muted">{{ control.temperatura }} °C</small></td>
-                    <td>{{ control.diagnostico|truncatechars:50 }}</td>
-                    <td>Dr. {{ control.medico_tratante.apellido|default:"N/A" }}</td>
-                    <td>
-                        <a href="{% url 'editar_consulta' control.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                        <a href="{% url 'borrar_consulta' control.id %}" class="btn btn-sm btn-outline-danger">Borrar</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center text-muted py-4">No hay consultas registradas en el sistema.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" style="min-width: 800px;">
+                <thead class="table-light text-uppercase fs-7 text-muted" style="letter-spacing: 0.5px;">
+                    <tr>
+                        <th class="ps-4 py-3">Fecha</th>
+                        <th class="py-3">Paciente</th>
+                        <th class="py-3">Programa</th>
+                        <th class="py-3">Signos Vitales Clave</th>
+                        <th class="py-3">Diagnóstico Preliminar</th>
+                        <th class="py-3 text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for consulta in consultas %}
+                    <tr>
+                        <td class="ps-4 text-secondary small fw-bold">
+                            {{ consulta.fecha_atencion|date:"d/m/Y" }}
+                        </td>
+                        
+                        <td>
+                            <div class="fw-bold text-dark">{{ consulta.paciente.nombre }} {{ consulta.paciente.apellido }}</div>
+                            <span class="text-muted small">C.I: {{ consulta.paciente.tipo_cedula }}-{{ consulta.paciente.cedula }}</span>
+                        </td>
+                        
+                        <td>
+                            <span class="badge rounded-pill px-2.5 py-1.5 bg-opacity-10 text-primary bg-primary small fw-bold">
+                                Control Endocrino
+                            </span>
+                        </td>
+                        
+                        <td class="small text-muted">
+                            <div><i class="fa-solid fa-heart text-danger me-1"></i> T.A: {{ consulta.tension_arterial|default:"--" }} mmHg</div>
+                            <div><i class="fa-solid fa-droplet text-info me-1"></i> Glicemia: {{ consulta.glucemia_ayunas|default:"--" }} mg/dL</div>
+                        </td>
+                        
+                        <td>
+                            <p class="mb-0 text-truncate small" style="max-width: 250px;" title="{{ consulta.diagnostico }}">
+                                {{ consulta.diagnostico|default:"Sin diagnóstico registrado" }}
+                            </p>
+                        </td>
+                        
+                        <td class="text-end pe-4">
+                            <div class="btn-group shadow-sm" role="group" aria-label="Acciones de Consulta">
+                                <a href="{% url 'detalle_control_endocrino' consulta.id %}" class="btn btn-sm btn-light border text-primary px-2.5" title="Ver Hoja Médica">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="{% url 'editar_control_endocrino' consulta.id %}" class="btn btn-sm btn-light border text-warning px-2.5" title="Modificar Registro">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a href="{% url 'eliminar_control_endocrino' consulta.id %}" class="btn btn-sm btn-light border text-danger px-2.5" title="Eliminar Consulta" 
+                                   onclick="return confirm('¿Está completamente seguro de eliminar esta evaluación médica? Esta acción no se puede deshacer.');">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <div class="text-muted mb-2"><i class="fa-solid fa-folder-open fa-2x text-light-sm"></i></div>
+                            <h6 class="fw-bold text-secondary mb-1">No se encontraron evaluaciones</h6>
+                            <p class="text-muted small mb-0">Verifique los datos de búsqueda o registre una nueva consulta.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
