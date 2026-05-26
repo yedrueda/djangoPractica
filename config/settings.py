@@ -126,5 +126,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-LOGIN_URL = 'login'
+LOGIN_URL = 'login'  # Redirige a esta URL si el usuario no está autenticado
+LOGIN_REDIRECT_URL = 'inicio'  # Redirige a esta URL después de iniciar
 LOGOUT_REDIRECT_URL = 'login'
