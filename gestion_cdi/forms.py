@@ -68,16 +68,18 @@ class InventarioEquipoForm(forms.ModelForm):
             'proximo_mantenimiento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
+from django import forms
+from .models import ControlEndocrino
+
 class ControlEndocrinoForm(forms.ModelForm):
     class Meta:
         model = ControlEndocrino
-        exclude = ['fecha_atencion'] # La fecha es automática
+        exclude = ['fecha_atencion']
         widgets = {
             'paciente': forms.Select(attrs={'class': 'form-select'}),
             'sede_tratamiento': forms.TextInput(attrs={'class': 'form-control'}),
             'pas': forms.Select(attrs={'class': 'form-select'}),
-            # Signos Vitales y Labs
-            'tension_arterial': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '120/80'}),
+            'tension_arterial': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 120/80'}),
             'frecuencia_cardiaca': forms.NumberInput(attrs={'class': 'form-control'}),
             'frecuencia_respiratoria': forms.NumberInput(attrs={'class': 'form-control'}),
             'temperatura': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
@@ -86,12 +88,11 @@ class ControlEndocrinoForm(forms.ModelForm):
             'glucemia_ayunas': forms.NumberInput(attrs={'class': 'form-control'}),
             'hba1c': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
             'creatinina': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'urea': forms.NumberInput(attrs={'class': 'form-control'}),
+            'urea': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
             'tgo': forms.NumberInput(attrs={'class': 'form-control'}),
             'tgp': forms.NumberInput(attrs={'class': 'form-control'}),
             'colesterol_total': forms.NumberInput(attrs={'class': 'form-control'}),
             'trigliceridos': forms.NumberInput(attrs={'class': 'form-control'}),
-            # TextAreas
             'medicamentos_entregados': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'diagnostico': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'tratamiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
@@ -100,7 +101,7 @@ class ControlEndocrinoForm(forms.ModelForm):
             'alergias': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'observaciones_finales': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'referencia': forms.TextInput(attrs={'class': 'form-control'}),
-            # Checkboxes
+            # Checkboxes puros
             'asociacion_cv': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'insulina': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'enfermedad_renal_cronica': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

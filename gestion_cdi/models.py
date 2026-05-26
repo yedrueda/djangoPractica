@@ -110,11 +110,12 @@ class PlanificacionFamiliar(models.Model):
 
 
 
+
 class ControlEndocrino(models.Model):
     # Identificación
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     fecha_atencion = models.DateField(auto_now_add=True)
-    sede_tratamiento = models.CharField(max_length=150, default="CDI El Llanito")
+    sede_tratamiento = models.CharField(max_length=150, default="CDI El Llanito", verbose_name="Sede de Tratamiento")
     pas = models.CharField(max_length=10, choices=[('Primera', 'Primera'), ('Sucesiva', 'Sucesiva')], default='Primera', verbose_name="P.A.S.")
 
     # Signos Vitales
@@ -135,18 +136,18 @@ class ControlEndocrino(models.Model):
     colesterol_total = models.IntegerField(null=True, blank=True)
     trigliceridos = models.IntegerField(null=True, blank=True)
 
-    # Patologías (9 Checkboxes)
-    asociacion_cv = models.BooleanField(default=False)
-    insulina = models.BooleanField(default=False)
-    enfermedad_renal_cronica = models.BooleanField(default=False)
-    obesidad = models.BooleanField(default=False)
-    diabetes_mellitus = models.BooleanField(default=False)
-    enf_tiroidea = models.BooleanField(default=False)
-    sobre_peso = models.BooleanField(default=False)
-    pie_diabetico = models.BooleanField(default=False)
-    dislipidemia = models.BooleanField(default=False)
+    # Patologías EXACTAS del Control Operativo Regional (Booleanos puros)
+    asociacion_cv = models.BooleanField(default=False, verbose_name="Asociación C.V.")
+    insulina = models.BooleanField(default=False, verbose_name="Insulina")
+    enfermedad_renal_cronica = models.BooleanField(default=False, verbose_name="Enfermedad Renal Crónica")
+    obesidad = models.BooleanField(default=False, verbose_name="Obesidad")
+    diabetes_mellitus = models.BooleanField(default=False, verbose_name="Diabetes Mellitus")
+    enf_tiroidea = models.BooleanField(default=False, verbose_name="Enf. Tiroidea")
+    sobre_peso = models.BooleanField(default=False, verbose_name="Sobre Peso")
+    pie_diabetico = models.BooleanField(default=False, verbose_name="Pie Diabético")
+    dislipidemia = models.BooleanField(default=False, verbose_name="Dislipidemia")
     
-    # Resolución
+    # Resolución y Otros
     medicamentos_entregados = models.TextField(null=True, blank=True)
     referencia = models.CharField(max_length=200, null=True, blank=True)
     conducta = models.TextField(null=True, blank=True)
