@@ -79,12 +79,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cdi_db_7xzt',                                          # El nombre de tu base de datos
-        'USER': 'admin_llanito',                                        # Tu usuario
-        'PASSWORD': 'XSiQzZ2mNxBNkcwYb9RkhvPB8Ycw8n6S',                 # Tu contraseña
-        'HOST': 'dpg-d7skvrugkk3c73dbn900-a.oregon-postgres.render.com', # SOLO el enlace del servidor
-        'PORT': '5432',                                                 # El puerto por defecto
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
