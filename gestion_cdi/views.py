@@ -19,7 +19,7 @@ def inicio(request):
         'total_pacientes': total_pacientes,
         'total_personal': total_personal,
         'total_equipos': total_equipos,
-        'total_consultas': total_consultas, # <-- NUEVA LÍNEA: Lo pasamos al HTML
+        'total_consultas': total_consultas, 
     }
     return render(request, 'gestion_cdi/inicio.html', contexto)
 
