@@ -15,6 +15,7 @@ class PersonalCDI(models.Model):
     telefono = models.CharField(max_length=20, null=True, blank=True)
     ESTATUS = [('Activo', 'Activo'), ('Permiso', 'Permiso'), ('Retirado', 'Retirado')]
     estatus = models.CharField(max_length=20, choices=ESTATUS, default='Activo')
+    carnet_de_la_patria = models.BooleanField(default=False, verbose_name="Carnet de la Patria")
     usuario = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True) # Conexión al login
     fecha_ingreso = models.DateField(auto_now_add=True)
 
@@ -54,21 +55,6 @@ class Paciente(models.Model):
 
 
 # --- 3. PROGRAMAS DE SALUD ---
-class ControlEndocrino(models.Model):
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
-    fecha_atencion = models.DateField(auto_now_add=True)
-    tension_arterial = models.CharField(max_length=10, null=True, blank=True)
-    peso_kg = models.DecimalField(max_digits=5, decimal_places=2)
-    talla_cm = models.IntegerField()
-    imc = models.DecimalField(max_digits=4, decimal_places=2)
-    hba1c = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, verbose_name="HbA1c")
-    diagnostico = models.TextField(null=True, blank=True)
-    tratamiento = models.TextField(null=True, blank=True)
-    atendido_por = models.ForeignKey(PersonalCDI, on_delete=models.SET_NULL, null=True)
-
-    class Meta:
-        verbose_name_plural = "Controles Endocrinos"
-
 class RutaMaterna(models.Model):
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     fecha_control = models.DateField(auto_now_add=True)
@@ -159,6 +145,9 @@ class ControlEndocrino(models.Model):
 
     def __str__(self):
         return f"Control Endocrino - {self.paciente.nombre} {self.paciente.apellido} ({self.fecha_atencion})"
+
+    class Meta:
+        verbose_name_plural = "Controles Endocrinos"
 
 
 # --- 4. EJE INFRAESTRUCTURA E INVENTARIO ---

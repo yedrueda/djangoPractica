@@ -1,8 +1,11 @@
 from django.contrib import admin
 from .models import PersonalCDI, Paciente, ControlEndocrino, RutaMaterna, PlanificacionFamiliar, InventarioEquipo
 
-# Registramos los módulos base de forma sencilla primero
-admin.site.register(PersonalCDI)
+@admin.register(PersonalCDI)
+class PersonalCDIAdmin(admin.ModelAdmin):
+    list_display = ('tipo_cedula', 'cedula', 'nombre', 'apellido', 'rol_profesional', 'estatus', 'carnet_de_la_patria')
+    list_filter = ('estatus', 'rol_profesional', 'carnet_de_la_patria')
+    search_fields = ('cedula', 'nombre', 'apellido')
 admin.site.register(Paciente)
 admin.site.register(ControlEndocrino)
 admin.site.register(RutaMaterna)

@@ -92,7 +92,7 @@ def editar_personal(request, cedula):
             return redirect('lista_personal')
     else:        
         form = PersonalCDIForm(instance=personal)
-    return render(request, 'gestion_cdi/editar_personal.html', {'form': form, 'personal': personal})    
+    return render(request, 'gestion_cdi/editar_personal.html', {'form': form, 'personal': personal, 'empleado': personal})    
                
 @login_required
 def borrar_personal(request, cedula):
@@ -145,11 +145,6 @@ def borrar_equipo(request, id):
 # ==========================================
 # MÓDULO CLÍNICO: CONSULTAS Y SIGNOS VITALES
 # ==========================================
-
-@login_required
-def lista_consultas(request):
-    controles = ControlEndocrino.objects.all().order_by('-fecha_atencion')
-    return render(request, 'gestion_cdi/lista_consultas.html', {'controles': controles})
 
 @login_required
 def crear_consulta(request):

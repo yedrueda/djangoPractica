@@ -15,6 +15,7 @@
                     <th>Nombre y Apellido</th>
                     <th>Rol / Especialidad</th>
                     <th>Estatus</th>
+                    <th>Carnet Patria</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -34,13 +35,20 @@
                         {% endif %}
                     </td>
                     <td>
+                        {% if empleado.carnet_de_la_patria %}
+                            <span class="badge bg-primary"><i class="fa fa-id-card me-1"></i> Posee</span>
+                        {% else %}
+                            <span class="badge bg-light text-muted border">No posee</span>
+                        {% endif %}
+                    </td>
+                    <td>
                         <a href="{% url 'editar_personal' empleado.cedula %}" class="btn btn-sm btn-outline-primary">Editar</a>
                         <a href="{% url 'borrar_personal' empleado.cedula %}" class="btn btn-sm btn-outline-danger">Borrar</a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center text-muted py-4">No hay personal registrado.</td>
+                    <td colspan="6" class="text-center text-muted py-4">No hay personal registrado.</td>
                 </tr>
                 {% endfor %}
             </tbody>

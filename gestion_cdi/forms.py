@@ -1,9 +1,6 @@
 from django import forms
 from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, RutaMaterna, PlanificacionFamiliar
 
-from django import forms
-from .models import Paciente
-
 class PacienteForm(forms.ModelForm):
     class Meta:
         model = Paciente
@@ -40,7 +37,7 @@ class PacienteForm(forms.ModelForm):
 class PersonalCDIForm(forms.ModelForm):
     class Meta:
         model = PersonalCDI
-        exclude = ['usuario_id']
+        exclude = ['usuario']
         widgets = {
             'tipo_cedula': forms.Select(attrs={'class': 'form-select', 'style': 'width: 80px; border-top-right-radius: 0; border-bottom-right-radius: 0;'}),
             'cedula': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 12345678', 'style': 'border-top-left-radius: 0; border-bottom-left-radius: 0;'}),
@@ -50,6 +47,7 @@ class PersonalCDIForm(forms.ModelForm):
             'especialidad': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Medicina General'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'estatus': forms.Select(attrs={'class': 'form-select'}),
+            'carnet_de_la_patria': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'}),
             'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 

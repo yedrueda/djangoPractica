@@ -21,8 +21,18 @@
                         {% for field in form %}
                             {% if field.name != 'cedula' and field.name != 'tipo_cedula' %}
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label text-muted fw-bold">{{ field.label }}</label>
-                                    {{ field }}
+                                    {% if field.field.widget.input_type == 'checkbox' %}
+                                        <label class="form-label text-muted fw-bold d-block">&nbsp;</label>
+                                        <div class="form-check form-switch pt-2">
+                                            {{ field }}
+                                            <label class="form-check-label fw-bold text-dark" for="{{ field.id_for_label }}">
+                                                <i class="fa fa-id-card text-info me-1"></i> {{ field.label }}
+                                            </label>
+                                        </div>
+                                    {% else %}
+                                        <label class="form-label text-muted fw-bold">{{ field.label }}</label>
+                                        {{ field }}
+                                    {% endif %}
                                 </div>
                             {% endif %}
                         {% endfor %}
