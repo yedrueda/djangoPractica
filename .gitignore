@@ -12,3 +12,6 @@ db.sqlite3
 
 # Archivos del sistema operativo
 .DS_Store
+
+# Archivos estáticos recolectados
+staticfiles/

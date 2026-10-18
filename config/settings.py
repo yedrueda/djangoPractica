@@ -27,7 +27,12 @@ SECRET_KEY = 'django-insecure-6qf$z5gh&k0-6%1=7y8s-wwcc%8jymz7-9sfkyy$^i3g_bghul
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'https://sige-cdi.onrender.com'] # dominio exacto que te dio Render
+ALLOWED_HOSTS = ['*', 'sige-cdi.onrender.com', '.onrender.com', 'localhost', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://sige-cdi.onrender.com',
+    'https://*.onrender.com',
+]
 
 
 # Application definition
@@ -47,6 +52,7 @@ TIME_ZONE = 'America/Caracas'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,9 +86,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DEFAULT_DB_URL = 'postgresql://postgres.vpwzsselglqovfkpkljb:postgres2026@aws-1-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require'
 
+raw_db_url = os.environ.get('DATABASE_URL', '').strip()
+DB_URL = raw_db_url if raw_db_url else DEFAULT_DB_URL
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', DEFAULT_DB_URL),
+        default=DB_URL,
         conn_max_age=600,
         ssl_require=True
     )
@@ -121,6 +130,15 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 LOGIN_URL = 'login'  # Redirige a esta URL si el usuario no está autenticado
 LOGIN_REDIRECT_URL = 'inicio'  # Redirige a esta URL después de iniciar
