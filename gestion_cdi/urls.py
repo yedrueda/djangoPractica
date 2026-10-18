@@ -26,6 +26,13 @@ urlpatterns = [
     path('personal/editar/<int:cedula>/', views.editar_personal, name='editar_personal'),
     path('personal/borrar/<int:cedula>/', views.borrar_personal, name='borrar_personal'),
 
+    # Módulo Poblacional, Comunal y Territorial (ASIC)
+    path('poblacion/', views.resumen_poblacional, name='resumen_poblacional'),
+    path('poblacion/cpt/nuevo/', views.crear_sector_cpt, name='crear_sector_cpt'),
+    path('poblacion/cpt/editar/<int:id>/', views.editar_sector_cpt, name='editar_sector_cpt'),
+    path('poblacion/cpt/borrar/<int:id>/', views.borrar_sector_cpt, name='borrar_sector_cpt'),
+    path('poblacion/indicadores/editar/', views.editar_indicadores_poblacionales, name='editar_indicadores_poblacionales'),
+
     # Control de Turnos y Guardias Médicas/Asistenciales
     path('guardias/', views.lista_guardias, name='lista_guardias'),
     path('guardias/nuevo/', views.crear_guardia, name='crear_guardia'),

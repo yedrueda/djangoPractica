@@ -1,11 +1,16 @@
 from datetime import date
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q # Para búsquedas avanzadas
-from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, RutaMaterna, PlanificacionFamiliar, TurnoGuardia
+from django.db.models import Q, Sum # Para búsquedas avanzadas y sumas
+from .models import (
+    Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, 
+    RutaMaterna, PlanificacionFamiliar, TurnoGuardia, 
+    Comuna, SectorCPT, IndicadorPoblacionalASIC
+)
 from .forms import (
     PacienteForm, PersonalCDIForm, InventarioEquipoForm, 
-    ControlEndocrinoForm, RutaMaternaForm, PlanificacionFamiliarForm, TurnoGuardiaForm
+    ControlEndocrinoForm, RutaMaternaForm, PlanificacionFamiliarForm, TurnoGuardiaForm,
+    SectorCPTForm, IndicadorPoblacionalForm
 )
 
 @login_required
@@ -357,4 +362,117 @@ def borrar_guardia(request, id):
         guardia.delete()
         return redirect('lista_guardias')
     return render(request, 'gestion_cdi/borrar_guardia.html', {'guardia': guardia})
+
+# ==========================================
+# 6. MÓDULO POBLACIONAL Y COMUNAL (ASIC)
+# ==========================================
+
+@login_required
+def resumen_poblacional(request):
+    indicador = IndicadorPoblacionalASIC.objects.first()
+    if not indicador:
+        indicador = IndicadorPoblacionalASIC.objects.create(
+            poblacion_total=54975,
+            familias_total=15180,
+            comunas_total=8,
+            femenino_total=28023,
+            masculino_total=26952,
+            tanque_agua_litros=40000,
+            planta_electrica_gasoil_capacidad=150,
+            planta_electrica_gasoil_actual=20,
+            red_referencia="CEO, Hospital Dr. Domingo Luciani, Clínica Popular Mesuca, CPT3 El Carmen"
+        )
+
+    # Conteo de pacientes reales registrados en base de datos
+    total_pacientes_bd = Paciente.objects.count()
+    pacientes_fem = Paciente.objects.filter(sexo='F').count()
+    pacientes_masc = Paciente.objects.filter(sexo='M').count()
+
+    # Porcentajes globales
+    porc_femenino = round((indicador.femenino_total / indicador.poblacion_total) * 100, 1) if indicador.poblacion_total else 0
+    porc_masculino = round((indicador.masculino_total / indicador.poblacion_total) * 100, 1) if indicador.poblacion_total else 0
+
+    # Comunas con sus CPTs
+    comunas = Comuna.objects.prefetch_related('sectores').all()
+    
+    # Filtros
+    comuna_id = request.GET.get('comuna', '')
+    busqueda = request.GET.get('buscar', '')
+
+    sectores = SectorCPT.objects.select_related('comuna').all()
+    if comuna_id:
+        sectores = sectores.filter(comuna_id=comuna_id)
+    if busqueda:
+        sectores = sectores.filter(
+            Q(nombre__icontains=busqueda) |
+            Q(medico_responsable__icontains=busqueda) |
+            Q(situacion_espacio__icontains=busqueda) |
+            Q(comuna__nombre__icontains=busqueda)
+        )
+
+    totales_cpt = SectorCPT.objects.aggregate(
+        total_pob=Sum('poblacion'),
+        total_fam=Sum('familias')
+    )
+
+    contexto = {
+        'indicador': indicador,
+        'porc_femenino': porc_femenino,
+        'porc_masculino': porc_masculino,
+        'total_pacientes_bd': total_pacientes_bd,
+        'pacientes_fem': pacientes_fem,
+        'pacientes_masc': pacientes_masc,
+        'comunas': comunas,
+        'sectores': sectores,
+        'comuna_id': comuna_id,
+        'busqueda': busqueda,
+        'totales_cpt': totales_cpt,
+    }
+    return render(request, 'gestion_cdi/resumen_poblacional.html', contexto)
+
+@login_required
+def crear_sector_cpt(request):
+    if request.method == 'POST':
+        form = SectorCPTForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('resumen_poblacional')
+    else:
+        comuna_inicial = request.GET.get('comuna')
+        form = SectorCPTForm(initial={'comuna': comuna_inicial} if comuna_inicial else None)
+    return render(request, 'gestion_cdi/crear_sector_cpt.html', {'form': form})
+
+@login_required
+def editar_sector_cpt(request, id):
+    sector = get_object_or_404(SectorCPT, id=id)
+    if request.method == 'POST':
+        form = SectorCPTForm(request.POST, instance=sector)
+        if form.is_valid():
+            form.save()
+            return redirect('resumen_poblacional')
+    else:
+        form = SectorCPTForm(instance=sector)
+    return render(request, 'gestion_cdi/editar_sector_cpt.html', {'form': form, 'sector': sector})
+
+@login_required
+def borrar_sector_cpt(request, id):
+    sector = get_object_or_404(SectorCPT, id=id)
+    if request.method == 'POST':
+        sector.delete()
+        return redirect('resumen_poblacional')
+    return render(request, 'gestion_cdi/borrar_sector_cpt.html', {'sector': sector})
+
+@login_required
+def editar_indicadores_poblacionales(request):
+    indicador = IndicadorPoblacionalASIC.objects.first()
+    if not indicador:
+        indicador = IndicadorPoblacionalASIC.objects.create()
+    if request.method == 'POST':
+        form = IndicadorPoblacionalForm(request.POST, instance=indicador)
+        if form.is_valid():
+            form.save()
+            return redirect('resumen_poblacional')
+    else:
+        form = IndicadorPoblacionalForm(instance=indicador)
+    return render(request, 'gestion_cdi/editar_indicadores_poblacionales.html', {'form': form, 'indicador': indicador})
 

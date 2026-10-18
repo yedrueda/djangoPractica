@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import PersonalCDI, Paciente, ControlEndocrino, RutaMaterna, PlanificacionFamiliar, InventarioEquipo, TurnoGuardia
+from .models import (
+    PersonalCDI, Paciente, ControlEndocrino, RutaMaterna, 
+    PlanificacionFamiliar, InventarioEquipo, TurnoGuardia,
+    Comuna, SectorCPT, IndicadorPoblacionalASIC
+)
 
 @admin.register(PersonalCDI)
 class PersonalCDIAdmin(admin.ModelAdmin):
@@ -13,6 +17,22 @@ class TurnoGuardiaAdmin(admin.ModelAdmin):
     list_filter = ('fecha', 'tipo_turno', 'area_servicio', 'estado')
     search_fields = ('personal__nombre', 'personal__apellido', 'personal__cedula', 'observaciones')
     date_hierarchy = 'fecha'
+
+@admin.register(Comuna)
+class ComunaAdmin(admin.ModelAdmin):
+    list_display = ('orden', 'nombre', 'total_poblacion', 'total_familias')
+    ordering = ('orden',)
+
+@admin.register(SectorCPT)
+class SectorCPTAdmin(admin.ModelAdmin):
+    list_display = ('numero', 'nombre', 'comuna', 'poblacion', 'familias', 'situacion_espacio', 'medico_responsable')
+    list_filter = ('comuna', 'situacion_espacio')
+    search_fields = ('nombre', 'medico_responsable', 'observaciones')
+    ordering = ('numero',)
+
+@admin.register(IndicadorPoblacionalASIC)
+class IndicadorPoblacionalASICAdmin(admin.ModelAdmin):
+    list_display = ('poblacion_total', 'familias_total', 'comunas_total', 'femenino_total', 'masculino_total', 'fecha_actualizacion')
 
 admin.site.register(Paciente)
 admin.site.register(ControlEndocrino)

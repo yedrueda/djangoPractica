@@ -1,0 +1,78 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Ajustar Censo Demográfico Global - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-dark text-white py-3">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fa-solid fa-sliders me-2"></i>Ajustar Censo Global del ASIC (Pizarra Oficial)
+                </h4>
+            </div>
+            <div class="card-body bg-white p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="fa-solid fa-chart-simple me-2"></i>Indicadores Demográficos Principales
+                    </h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-bold">{{ form.poblacion_total.label }}</label>
+                            {{ form.poblacion_total }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-bold">{{ form.familias_total.label }}</label>
+                            {{ form.familias_total }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-bold">{{ form.comunas_total.label }}</label>
+                            {{ form.comunas_total }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold" style="color: #e84393;">{{ form.femenino_total.label }}</label>
+                            {{ form.femenino_total }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold text-primary">{{ form.masculino_total.label }}</label>
+                            {{ form.masculino_total }}
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="fa-solid fa-truck-droplet me-2"></i>Capacidad Operativa y Logística del CDI
+                    </h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-bold">{{ form.tanque_agua_litros.label }}</label>
+                            {{ form.tanque_agua_litros }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-bold">{{ form.planta_electrica_gasoil_capacidad.label }}</label>
+                            {{ form.planta_electrica_gasoil_capacidad }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-bold">{{ form.planta_electrica_gasoil_actual.label }}</label>
+                            {{ form.planta_electrica_gasoil_actual }}
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label text-muted fw-bold">{{ form.red_referencia.label }}</label>
+                            {{ form.red_referencia }}
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-top text-end">
+                        <a href="{% url 'resumen_poblacional' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa-solid fa-check me-1"></i> Actualizar Censo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

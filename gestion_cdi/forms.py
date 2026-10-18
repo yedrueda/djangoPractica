@@ -1,5 +1,9 @@
 from django import forms
-from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, RutaMaterna, PlanificacionFamiliar, TurnoGuardia
+from .models import (
+    Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, 
+    RutaMaterna, PlanificacionFamiliar, TurnoGuardia, 
+    Comuna, SectorCPT, IndicadorPoblacionalASIC
+)
 
 class PacienteForm(forms.ModelForm):
     class Meta:
@@ -194,4 +198,47 @@ class TurnoGuardiaForm(forms.ModelForm):
             'estado': forms.Select(attrs={'class': 'form-select'}),
             'suplente': forms.Select(attrs={'class': 'form-select'}),
             'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Detalles de la guardia, sustitución o novedades...'}),
+        }
+
+class SectorCPTForm(forms.ModelForm):
+    class Meta:
+        model = SectorCPT
+        fields = ['comuna', 'numero', 'nombre', 'tipo_cpt', 'poblacion', 'familias', 'medico_responsable', 'situacion_espacio', 'observaciones']
+        labels = {
+            'comuna': 'Comuna a la que Pertenece',
+            'numero': 'Número de CPT / Sector',
+            'nombre': 'Nombre del Consultorio Popular / Sector',
+            'tipo_cpt': 'Tipo de CPT',
+            'poblacion': 'Población Estimada (Habitantes)',
+            'familias': 'Número de Familias Censadas',
+            'medico_responsable': 'Médicos Asignados',
+            'situacion_espacio': 'Estado del Espacio Físico',
+            'observaciones': 'Novedades / Observaciones',
+        }
+        widgets = {
+            'comuna': forms.Select(attrs={'class': 'form-select'}),
+            'numero': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: La Cooperativa'}),
+            'tipo_cpt': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: CPT 1-2 o CPT 3'}),
+            'poblacion': forms.NumberInput(attrs={'class': 'form-control', 'min': 0}),
+            'familias': forms.NumberInput(attrs={'class': 'form-control', 'min': 0}),
+            'medico_responsable': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Dra. Ruth Hdz (Artic. 8)'}),
+            'situacion_espacio': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Operativo, Sin Espacio Físico, Colegio, En Reparación...'}),
+            'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Detalles sobre la infraestructura o territorio...'}),
+        }
+
+class IndicadorPoblacionalForm(forms.ModelForm):
+    class Meta:
+        model = IndicadorPoblacionalASIC
+        fields = '__all__'
+        widgets = {
+            'poblacion_total': forms.NumberInput(attrs={'class': 'form-control'}),
+            'familias_total': forms.NumberInput(attrs={'class': 'form-control'}),
+            'comunas_total': forms.NumberInput(attrs={'class': 'form-control'}),
+            'femenino_total': forms.NumberInput(attrs={'class': 'form-control'}),
+            'masculino_total': forms.NumberInput(attrs={'class': 'form-control'}),
+            'tanque_agua_litros': forms.NumberInput(attrs={'class': 'form-control'}),
+            'planta_electrica_gasoil_capacidad': forms.NumberInput(attrs={'class': 'form-control'}),
+            'planta_electrica_gasoil_actual': forms.NumberInput(attrs={'class': 'form-control'}),
+            'red_referencia': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }

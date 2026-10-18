@@ -1,0 +1,70 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Registrar Consultorio Popular (CPT) - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white py-3">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fa-solid fa-plus-circle me-2"></i>Registrar Consultorio Popular / Sector
+                </h4>
+            </div>
+            <div class="card-body bg-white p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold">{{ form.comuna.label }} <span class="text-danger">*</span></label>
+                            {{ form.comuna }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted fw-bold">{{ form.numero.label }} <span class="text-danger">*</span></label>
+                            {{ form.numero }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted fw-bold">{{ form.tipo_cpt.label }}</label>
+                            {{ form.tipo_cpt }}
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label text-muted fw-bold">{{ form.nombre.label }} <span class="text-danger">*</span></label>
+                            {{ form.nombre }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold">{{ form.poblacion.label }}</label>
+                            {{ form.poblacion }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold">{{ form.familias.label }}</label>
+                            {{ form.familias }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold">{{ form.medico_responsable.label }}</label>
+                            {{ form.medico_responsable }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold">{{ form.situacion_espacio.label }}</label>
+                            {{ form.situacion_espacio }}
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label text-muted fw-bold">{{ form.observaciones.label }}</label>
+                            {{ form.observaciones }}
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top text-end">
+                        <a href="{% url 'resumen_poblacional' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa-solid fa-check me-1"></i> Guardar CPT / Sector
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

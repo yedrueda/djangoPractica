@@ -134,6 +134,7 @@ Una vez que el servidor esté corriendo, abre tu navegador web preferido (Chrome
 | **Inicio / Dashboard** | `/` | Resumen cuantitativo de pacientes, personal, equipos y consultas. |
 | **Directorio de Personal** | `/personal/` | Gestión de talento humano (Médicos, Enfermeros, etc.) con indicador de **Carnet de la Patria**. |
 | **Turnos de Guardia** | `/guardias/` | Planificación y asignación de guardias médicas/asistenciales, horarios, áreas y suplencias. |
+| **Censo y Demografía** | `/poblacion/` | Censo demográfico del ASIC: 8 Comunas, 24 Consultorios Populares (CPT), familias y desglose por género (M/F). |
 | **Gestión de Pacientes** | `/pacientes/` | Censo demográfico, control por ASIC y cálculo dinámico de edad. |
 | **Inventario de Equipos** | `/inventario/` | Control de Bienes Nacionales (médicos, electrónicos, mobiliario) y estado físico. |
 | **Sala de Triaje Clínico** | `/consultas/seleccionar-programa/` | Acceso rápido a los 3 programas de atención comunitaria. |

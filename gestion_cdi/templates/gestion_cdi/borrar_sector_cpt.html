@@ -1,0 +1,31 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Eliminar CPT / Sector - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow border-danger">
+            <div class="card-body text-center p-5">
+                <div class="text-danger mb-3">
+                    <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
+                </div>
+                <h4 class="mb-3 text-danger fw-bold">¿Eliminar Consultorio Popular / Sector?</h4>
+                <div class="bg-light p-3 rounded mb-4 text-start">
+                    <div><strong>N° / Nombre:</strong> {{ sector.numero }}. {{ sector.nombre }}</div>
+                    <div><strong>Comuna:</strong> Comuna {{ sector.comuna.orden }}: {{ sector.comuna.nombre }}</div>
+                    <div><strong>Población:</strong> {{ sector.poblacion }} habitantes</div>
+                    <div><strong>Familias:</strong> {{ sector.familias }}</div>
+                </div>
+                <p class="text-muted small">Esta acción no se puede deshacer.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <a href="{% url 'resumen_poblacional' %}" class="btn btn-secondary px-4 me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="fa-solid fa-trash me-1"></i> Confirmar Eliminación
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

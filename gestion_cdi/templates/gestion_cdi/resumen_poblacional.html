@@ -1,0 +1,332 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Módulo Poblacional y Comunal - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h3 class="mb-1 text-dark fw-bold">
+            <i class="fa-solid fa-map-location-dot text-primary me-2"></i>Módulo Poblacional y Comunal
+        </h3>
+        <p class="text-muted small mb-0">Demografía, distribución territorial por Comunas y Consultorios Populares (CPT) del ASIC El Llanito</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'editar_indicadores_poblacionales' %}" class="btn btn-outline-secondary btn-sm shadow-sm">
+            <i class="fa-solid fa-gear me-1"></i> Ajustar Censo Global
+        </a>
+        <a href="{% url 'crear_sector_cpt' %}" class="btn btn-primary btn-sm px-3 shadow-sm">
+            <i class="fa-solid fa-plus me-1"></i> Registrar Nuevo CPT
+        </a>
+    </div>
+</div>
+
+<!-- 1. TARJETAS DE INDICADORES PRINCIPALES (PIZARRA OFICIAL) -->
+<div class="row g-3 mb-4">
+    <!-- Población Total -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid var(--accent-blue) !important;">
+            <div class="card-body p-3">
+                <div class="text-uppercase text-muted fw-bold" style="font-size: 0.72rem; letter-spacing: 0.5px;">Población Total</div>
+                <div class="h3 mb-0 fw-bold text-dark mt-1">{{ indicador.poblacion_total|default:"54975"|floatformat:"0" }}</div>
+                <div class="text-muted small mt-1">Habitantes censados</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Familias -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid var(--accent-green) !important;">
+            <div class="card-body p-3">
+                <div class="text-uppercase text-muted fw-bold" style="font-size: 0.72rem; letter-spacing: 0.5px;">Total Familias</div>
+                <div class="h3 mb-0 fw-bold text-dark mt-1">{{ indicador.familias_total|default:"15180"|floatformat:"0" }}</div>
+                <div class="text-muted small mt-1">Hogares registrados</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comunas -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid var(--accent-orange) !important;">
+            <div class="card-body p-3">
+                <div class="text-uppercase text-muted fw-bold" style="font-size: 0.72rem; letter-spacing: 0.5px;">Comunas Activas</div>
+                <div class="h3 mb-0 fw-bold text-dark mt-1">{{ comunas.count|default:"8" }}</div>
+                <div class="text-muted small mt-1">Territorios organizados</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Femenino -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid #e84393 !important;">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase fw-bold text-muted" style="font-size: 0.72rem;">Femenino (F)</div>
+                        <div class="h3 mb-0 fw-bold" style="color: #e84393;">{{ indicador.femenino_total|default:"28023" }}</div>
+                        <div class="text-muted small">{{ porc_femenino }}% del censo general</div>
+                    </div>
+                    <div class="rounded-circle p-2 text-white" style="background-color: #e84393;">
+                        <i class="fa-solid fa-venus fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Masculino -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid #0984e3 !important;">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase fw-bold text-muted" style="font-size: 0.72rem;">Masculino (M)</div>
+                        <div class="h3 mb-0 fw-bold text-primary">{{ indicador.masculino_total|default:"26952" }}</div>
+                        <div class="text-muted small">{{ porc_masculino }}% del censo general</div>
+                    </div>
+                    <div class="rounded-circle p-2 text-white bg-primary">
+                        <i class="fa-solid fa-mars fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. COMPARATIVA DE GÉNERO Y COBERTURA CLÍNICA -->
+<div class="row g-4 mb-4">
+    <!-- Barra Gráfica de Género -->
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="mb-0 fw-bold text-dark">
+                    <i class="fa-solid fa-chart-pie text-primary me-2"></i>Distribución Demográfica por Género
+                </h6>
+            </div>
+            <div class="card-body pt-0">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="fw-bold" style="color: #e84393;"><i class="fa-solid fa-venus me-1"></i>Mujeres: {{ indicador.femenino_total }} ({{ porc_femenino }}%)</span>
+                    <span class="fw-bold text-primary"><i class="fa-solid fa-mars me-1"></i>Hombres: {{ indicador.masculino_total }} ({{ porc_masculino }}%)</span>
+                </div>
+                <div class="progress" style="height: 26px; border-radius: 8px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                         style="width: {{ porc_femenino }}%; background-color: #e84393;" 
+                         aria-valuenow="{{ porc_femenino }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ porc_femenino }}% Femenino
+                    </div>
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" 
+                         style="width: {{ porc_masculino }}%;" 
+                         aria-valuenow="{{ porc_masculino }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ porc_masculino }}% Masculino
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Cobertura de Pacientes en Sistema vs Censo -->
+                <h6 class="fw-bold text-dark mb-2">
+                    <i class="fa-solid fa-hospital-user text-success me-2"></i>Pacientes Registrados en Plataforma
+                </h6>
+                <div class="row text-center mt-3 g-2">
+                    <div class="col-4">
+                        <div class="bg-light p-2 rounded">
+                            <span class="text-muted small d-block">Total en Sistema</span>
+                            <span class="h5 fw-bold text-dark mb-0">{{ total_pacientes_bd }}</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="bg-light p-2 rounded">
+                            <span class="small d-block" style="color: #e84393;">Femenino</span>
+                            <span class="h5 fw-bold mb-0" style="color: #e84393;">{{ pacientes_fem }}</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="bg-light p-2 rounded">
+                            <span class="small d-block text-primary">Masculino</span>
+                            <span class="h5 fw-bold text-primary mb-0">{{ pacientes_masc }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Punto y Círculo & Recursos del CDI -->
+    <div class="col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="mb-0 fw-bold text-dark">
+                    <i class="fa-solid fa-circle-nodes text-primary me-2"></i>Punto y Círculo & Logística Vital
+                </h6>
+            </div>
+            <div class="card-body pt-0">
+                <div class="mb-3">
+                    <span class="text-muted small fw-bold text-uppercase d-block mb-1">Red de Salud y Referencia:</span>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-1"><i class="fa-solid fa-hospital text-danger me-2"></i><strong>Hospital Dr. Domingo Luciani</strong> (Referencia Central)</li>
+                        <li class="mb-1"><i class="fa-solid fa-clinic-medical text-primary me-2"></i><strong>Clínica Popular Mesuca</strong></li>
+                        <li class="mb-1"><i class="fa-solid fa-stethoscope text-success me-2"></i><strong>CPT3 El Carmen</strong></li>
+                        <li><i class="fa-solid fa-building-shield text-info me-2"></i><strong>CEO</strong> (Centro de Especialidades)</li>
+                    </ul>
+                </div>
+
+                <hr class="my-3">
+
+                <div>
+                    <span class="text-muted small fw-bold text-uppercase d-block mb-2">Capacidad Operativa del CDI:</span>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small"><i class="fa-solid fa-faucet-drip text-info me-2"></i>Tanque de Agua:</span>
+                        <span class="badge bg-info text-dark fw-bold">{{ indicador.tanque_agua_litros|default:"40000" }} Litros</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="small"><i class="fa-solid fa-bolt text-warning me-2"></i>Planta Eléctrica:</span>
+                        <div>
+                            <span class="badge bg-warning text-dark fw-bold">{{ indicador.planta_electrica_gasoil_capacidad|default:"150" }} Lts Gasoil</span>
+                            <span class="badge bg-light text-muted border ms-1">Actual: {{ indicador.planta_electrica_gasoil_actual|default:"20" }} L</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. RESUMEN POR LAS 8 COMUNAS -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold text-dark">
+            <i class="fa-solid fa-landmark text-primary me-2"></i>Distribución por las 8 Comunas del Territorio
+        </h6>
+        <span class="badge bg-secondary">{{ comunas.count }} Comunas</span>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            {% for c in comunas %}
+            <div class="col-xl-3 col-md-6">
+                <div class="p-3 border rounded h-100 bg-light bg-opacity-50">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary">Comuna {{ c.orden }}</span>
+                        <span class="text-muted small">{{ c.sectores.count }} CPT(s)</span>
+                    </div>
+                    <h6 class="fw-bold text-dark mb-2">{{ c.nombre }}</h6>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span>Población:</span>
+                        <strong class="text-dark">{{ c.total_poblacion|default:"0" }} hab.</strong>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span>Familias:</span>
+                        <strong class="text-dark">{{ c.total_familias|default:"0" }}</strong>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- 4. TABLA DETALLADA DE LOS 24 CONSULTORIOS POPULARES (CPT) -->
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h6 class="mb-0 fw-bold text-dark">
+                <i class="fa-solid fa-list-check text-primary me-2"></i>Censo Detallado por Consultorio Popular (CPT 1-2)
+            </h6>
+            <!-- Filtro rápido por comuna -->
+            <form method="get" class="d-flex gap-2">
+                <select name="comuna" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">Todas las Comunas</option>
+                    {% for c in comunas %}
+                        <option value="{{ c.id }}" {% if comuna_id == c.id|stringformat:"i" %}selected{% endif %}>
+                            Comuna {{ c.orden }}: {{ c.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="buscar" value="{{ busqueda }}" placeholder="Buscar sector o médico..." class="form-control form-control-sm">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-search"></i></button>
+                {% if comuna_id or busqueda %}
+                    <a href="{% url 'resumen_poblacional' %}" class="btn btn-sm btn-outline-secondary" title="Limpiar"><i class="fa-solid fa-rotate-left"></i></a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3" style="width: 60px;">N°</th>
+                        <th>Sector / Consultorio Popular (CPT)</th>
+                        <th>Comuna</th>
+                        <th class="text-end">Población (P)</th>
+                        <th class="text-end">Familias (F)</th>
+                        <th>Médicos Asignados</th>
+                        <th>Situación del Espacio</th>
+                        <th class="text-end pe-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cpt in sectores %}
+                    <tr>
+                        <td class="ps-3 fw-bold text-muted">{{ cpt.numero }}</td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ cpt.nombre }}</div>
+                            <span class="text-muted small">{{ cpt.tipo_cpt }}</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">
+                                Comuna {{ cpt.comuna.orden }}: {{ cpt.comuna.nombre }}
+                            </span>
+                        </td>
+                        <td class="text-end fw-bold text-dark">{{ cpt.poblacion }}</td>
+                        <td class="text-end fw-bold text-muted">{{ cpt.familias }}</td>
+                        <td>
+                            {% if cpt.medico_responsable %}
+                                <span class="small"><i class="fa-solid fa-user-doctor text-primary me-1"></i>{{ cpt.medico_responsable }}</span>
+                            {% else %}
+                                <span class="badge bg-light text-muted border">Sin asignar</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if "Sin Espacio" in cpt.situacion_espacio %}
+                                <span class="badge bg-danger bg-opacity-75">{{ cpt.situacion_espacio }}</span>
+                            {% elif "Colegio" in cpt.situacion_espacio %}
+                                <span class="badge bg-warning text-dark"><i class="fa-solid fa-school me-1"></i>{{ cpt.situacion_espacio }}</span>
+                            {% elif "Reparación" in cpt.situacion_espacio or "Conflicto" in cpt.situacion_espacio %}
+                                <span class="badge bg-danger">{{ cpt.situacion_espacio }}</span>
+                            {% elif cpt.situacion_espacio == 'Operativo' %}
+                                <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Operativo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ cpt.situacion_espacio }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-3">
+                            <a href="{% url 'editar_sector_cpt' cpt.id %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <a href="{% url 'borrar_sector_cpt' cpt.id %}" class="btn btn-sm btn-outline-danger ms-1" title="Eliminar">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-circle-question fa-3x mb-3 text-secondary d-block"></i>
+                            No se encontraron consultorios o sectores con los filtros indicados.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% if sectores %}
+                <tfoot class="table-light fw-bold">
+                    <tr>
+                        <td colspan="3" class="ps-3">Total Sumatoria Visible:</td>
+                        <td class="text-end">{{ totales_cpt.total_pob|default:"0" }} hab.</td>
+                        <td class="text-end">{{ totales_cpt.total_fam|default:"0" }} fam.</td>
+                        <td colspan="3"></td>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

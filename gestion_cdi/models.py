@@ -217,3 +217,75 @@ class TurnoGuardia(models.Model):
         verbose_name_plural = "Turnos de Guardias"
         ordering = ['-fecha', 'tipo_turno']
 
+
+# --- 6. EJE TERRITORIAL Y POBLACIONAL (COMUNAS Y CPT) ---
+class Comuna(models.Model):
+    nombre = models.CharField(max_length=150, unique=True, verbose_name="Nombre de la Comuna")
+    orden = models.PositiveIntegerField(default=1, verbose_name="Número / Orden")
+    descripcion = models.TextField(null=True, blank=True, verbose_name="Descripción / Ámbito Territorial")
+
+    def __str__(self):
+        return f"Comuna {self.orden}: {self.nombre}"
+
+    @property
+    def total_poblacion(self):
+        return sum(cpt.poblacion for cpt in self.sectores.all())
+
+    @property
+    def total_familias(self):
+        return sum(cpt.familias for cpt in self.sectores.all())
+
+    class Meta:
+        verbose_name = "Comuna"
+        verbose_name_plural = "Comunas"
+        ordering = ['orden', 'nombre']
+
+
+class SectorCPT(models.Model):
+    comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE, related_name='sectores', verbose_name="Comuna de Adscripción")
+    numero = models.PositiveIntegerField(verbose_name="N° CPT", help_text="Número secuencial en la red del ASIC")
+    nombre = models.CharField(max_length=150, verbose_name="Nombre del Sector / Consultorio Popular")
+    tipo_cpt = models.CharField(max_length=50, default='CPT 1-2', verbose_name="Clasificación CPT")
+    poblacion = models.PositiveIntegerField(default=0, verbose_name="Población Asignada (Habitantes)")
+    familias = models.PositiveIntegerField(default=0, verbose_name="Familias Asignadas")
+    medico_responsable = models.CharField(max_length=150, null=True, blank=True, verbose_name="Médicos Asignados")
+    situacion_espacio = models.CharField(max_length=150, default='Operativo', verbose_name="Situación / Espacio Físico")
+    observaciones = models.TextField(null=True, blank=True, verbose_name="Observaciones / Novedades")
+
+    def __str__(self):
+        return f"{self.numero}. {self.nombre} ({self.comuna.nombre})"
+
+    class Meta:
+        verbose_name = "Consultorio Popular (CPT) / Sector"
+        verbose_name_plural = "Consultorios Populares (CPT) / Sectores"
+        ordering = ['numero']
+
+
+class IndicadorPoblacionalASIC(models.Model):
+    """Parámetros demográficos y logísticos globales del ASIC (Pizarra oficial)"""
+    poblacion_total = models.PositiveIntegerField(default=54975, verbose_name="Población Total")
+    familias_total = models.PositiveIntegerField(default=15180, verbose_name="Total Familias")
+    comunas_total = models.PositiveIntegerField(default=8, verbose_name="Total Comunas")
+    femenino_total = models.PositiveIntegerField(default=28023, verbose_name="Población Femenina (F)")
+    masculino_total = models.PositiveIntegerField(default=26952, verbose_name="Población Masculina (M)")
+    
+    # Capacidad Logística del CDI (de la pizarra)
+    tanque_agua_litros = models.PositiveIntegerField(default=40000, verbose_name="Capacidad Tanque de Agua (Litros)")
+    planta_electrica_gasoil_capacidad = models.PositiveIntegerField(default=150, verbose_name="Capacidad Planta Eléctrica (Litros Gasoil)")
+    planta_electrica_gasoil_actual = models.PositiveIntegerField(default=20, verbose_name="Gasoil Actual (Litros)")
+    
+    # Puntos de Referencia y Red de Salud (Punto y Círculo)
+    red_referencia = models.TextField(
+        default="CEO, Hospital Dr. Domingo Luciani, Clínica Popular Mesuca, CPT3 El Carmen",
+        verbose_name="Red de Referencia / Punto y Círculo"
+    )
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Censo ASIC El Llanito: {self.poblacion_total:,} hab | {self.familias_total:,} familias"
+
+    class Meta:
+        verbose_name = "Indicador Demográfico del ASIC"
+        verbose_name_plural = "Indicadores Demográficos del ASIC"
+
+
