@@ -26,6 +26,12 @@ urlpatterns = [
     path('personal/editar/<int:cedula>/', views.editar_personal, name='editar_personal'),
     path('personal/borrar/<int:cedula>/', views.borrar_personal, name='borrar_personal'),
 
+    # Control de Turnos y Guardias Médicas/Asistenciales
+    path('guardias/', views.lista_guardias, name='lista_guardias'),
+    path('guardias/nuevo/', views.crear_guardia, name='crear_guardia'),
+    path('guardias/editar/<int:id>/', views.editar_guardia, name='editar_guardia'),
+    path('guardias/borrar/<int:id>/', views.borrar_guardia, name='borrar_guardia'),
+
     # Inventario Físico (Equipos Médicos y Tecnológicos)
     path('inventario/', views.lista_equipos, name='lista_equipos'),
     path('inventario/nuevo/', views.crear_equipo, name='crear_equipo'),

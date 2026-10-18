@@ -1,0 +1,101 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Asignar Turno de Guardia - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white py-3">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fa-solid fa-calendar-plus me-2"></i>Asignar Turno de Guardia
+                </h4>
+            </div>
+            <div class="card-body bg-white p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label text-muted fw-bold">
+                                <i class="fa-solid fa-user-doctor text-primary me-1"></i>{{ form.personal.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.personal }}
+                            {% if form.personal.errors %}
+                                <div class="text-danger small mt-1">{{ form.personal.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold">
+                                <i class="fa-regular fa-calendar text-primary me-1"></i>{{ form.fecha.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.fecha }}
+                            {% if form.fecha.errors %}
+                                <div class="text-danger small mt-1">{{ form.fecha.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold">
+                                <i class="fa-regular fa-clock text-primary me-1"></i>{{ form.tipo_turno.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.tipo_turno }}
+                            {% if form.tipo_turno.errors %}
+                                <div class="text-danger small mt-1">{{ form.tipo_turno.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold">
+                                <i class="fa-solid fa-hospital-user text-primary me-1"></i>{{ form.area_servicio.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.area_servicio }}
+                            {% if form.area_servicio.errors %}
+                                <div class="text-danger small mt-1">{{ form.area_servicio.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold">
+                                <i class="fa-solid fa-flag text-primary me-1"></i>{{ form.estado.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.estado }}
+                            {% if form.estado.errors %}
+                                <div class="text-danger small mt-1">{{ form.estado.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label text-muted fw-bold">
+                                <i class="fa-solid fa-user-shield text-info me-1"></i>{{ form.suplente.label }}
+                            </label>
+                            {{ form.suplente }}
+                            <div class="form-text">Solo seleccione suplente si el titular fue reemplazado o cubierto por otro personal.</div>
+                            {% if form.suplente.errors %}
+                                <div class="text-danger small mt-1">{{ form.suplente.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label text-muted fw-bold">
+                                <i class="fa-regular fa-comment-dots text-primary me-1"></i>{{ form.observaciones.label }}
+                            </label>
+                            {{ form.observaciones }}
+                            {% if form.observaciones.errors %}
+                                <div class="text-danger small mt-1">{{ form.observaciones.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top text-end">
+                        <a href="{% url 'lista_guardias' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa-solid fa-check me-1"></i> Guardar Guardia
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

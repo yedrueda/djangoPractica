@@ -1,5 +1,5 @@
 from django import forms
-from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, RutaMaterna, PlanificacionFamiliar
+from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, RutaMaterna, PlanificacionFamiliar, TurnoGuardia
 
 class PacienteForm(forms.ModelForm):
     class Meta:
@@ -65,9 +65,6 @@ class InventarioEquipoForm(forms.ModelForm):
             'ultima_revision': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'proximo_mantenimiento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
-
-from django import forms
-from .models import ControlEndocrino
 
 class ControlEndocrinoForm(forms.ModelForm):
     class Meta:
@@ -168,4 +165,33 @@ class PlanificacionFamiliarForm(forms.ModelForm):
             'diu': forms.Select(choices=[('No', 'No'), ('Colocado', 'Colocado'), ('Control', 'Control')], attrs={'class': 'form-select'}),
             'implante': forms.Select(choices=[('No', 'No'), ('Colocado', 'Colocado'), ('Control', 'Control')], attrs={'class': 'form-select'}),
             'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class TurnoGuardiaForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['personal'].label_from_instance = lambda obj: f"{obj.tipo_cedula}-{obj.cedula} | {obj.nombre} {obj.apellido} ({obj.rol_profesional})"
+        self.fields['suplente'].label_from_instance = lambda obj: f"{obj.tipo_cedula}-{obj.cedula} | {obj.nombre} {obj.apellido} ({obj.rol_profesional})"
+        self.fields['suplente'].required = False
+
+    class Meta:
+        model = TurnoGuardia
+        fields = ['personal', 'fecha', 'tipo_turno', 'area_servicio', 'estado', 'suplente', 'observaciones']
+        labels = {
+            'personal': 'Personal Titular',
+            'fecha': 'Fecha de la Guardia',
+            'tipo_turno': 'Tipo de Turno / Horario',
+            'area_servicio': 'Área o Servicio Asignado',
+            'estado': 'Estatus de la Guardia',
+            'suplente': 'Personal Suplente (Opcional)',
+            'observaciones': 'Novedades / Observaciones',
+        }
+        widgets = {
+            'personal': forms.Select(attrs={'class': 'form-select'}),
+            'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'tipo_turno': forms.Select(attrs={'class': 'form-select'}),
+            'area_servicio': forms.Select(attrs={'class': 'form-select'}),
+            'estado': forms.Select(attrs={'class': 'form-select'}),
+            'suplente': forms.Select(attrs={'class': 'form-select'}),
+            'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Detalles de la guardia, sustitución o novedades...'}),
         }

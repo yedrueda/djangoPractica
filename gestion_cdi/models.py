@@ -168,6 +168,52 @@ class InventarioEquipo(models.Model):
         verbose_name_plural = "Inventario de Equipos"
 
 
+# --- 5. EJE LOGÍSTICA Y TALENTO HUMANO: TURNOS DE GUARDIA ---
+class TurnoGuardia(models.Model):
+    TURNOS = [
+        ('Diurno 12h', 'Diurno 12h (7:00 AM - 7:00 PM)'),
+        ('Nocturno 12h', 'Nocturno 12h (7:00 PM - 7:00 AM)'),
+        ('Guardia 24h', 'Guardia 24h (7:00 AM - 7:00 AM)'),
+        ('Mañana 6h', 'Mañana (7:00 AM - 1:00 PM)'),
+        ('Tarde 6h', 'Tarde (1:00 PM - 7:00 PM)'),
+        ('Retén', 'Retén / Disponibilidad'),
+    ]
 
+    AREAS = [
+        ('Emergencia / Triaje', 'Emergencia / Triaje'),
+        ('Hospitalización', 'Hospitalización'),
+        ('Terapia Intensiva', 'Terapia Intensiva'),
+        ('Enfermería Central', 'Enfermería Central'),
+        ('Laboratorio', 'Laboratorio'),
+        ('Rayos X / Imagenología', 'Rayos X / Imagenología'),
+        ('Farmacia', 'Farmacia'),
+        ('Ambulancia / Traslado', 'Ambulancia / Traslado'),
+        ('Mantenimiento / Servicios', 'Mantenimiento / Servicios'),
+        ('Administración', 'Administración'),
+    ]
 
-    
+    ESTADOS = [
+        ('Programada', 'Programada'),
+        ('En Curso', 'En Curso'),
+        ('Cumplida', 'Cumplida'),
+        ('Suplida', 'Suplida (Cambio de guardia)'),
+        ('Inasistencia', 'Inasistencia'),
+    ]
+
+    personal = models.ForeignKey(PersonalCDI, on_delete=models.CASCADE, related_name='guardias', verbose_name="Personal Asignado")
+    fecha = models.DateField(verbose_name="Fecha de la Guardia")
+    tipo_turno = models.CharField(max_length=50, choices=TURNOS, verbose_name="Tipo de Turno")
+    area_servicio = models.CharField(max_length=60, choices=AREAS, verbose_name="Área o Servicio")
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='Programada', verbose_name="Estado de la Guardia")
+    suplente = models.ForeignKey(PersonalCDI, on_delete=models.SET_NULL, null=True, blank=True, related_name='guardias_suplidas', verbose_name="Personal Suplente (si aplica)")
+    observaciones = models.TextField(null=True, blank=True, verbose_name="Observaciones / Novedades")
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.fecha} - {self.personal.nombre} {self.personal.apellido} ({self.tipo_turno} en {self.area_servicio})"
+
+    class Meta:
+        verbose_name = "Turno de Guardia"
+        verbose_name_plural = "Turnos de Guardias"
+        ordering = ['-fecha', 'tipo_turno']
+

@@ -1,25 +1,31 @@
+from datetime import date
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q # Para búsquedas avanzadas
-from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino
-from .forms import PacienteForm, PersonalCDIForm, InventarioEquipoForm, ControlEndocrinoForm,RutaMaternaForm, PlanificacionFamiliarForm
-
-
-
-
+from .models import Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, RutaMaterna, PlanificacionFamiliar, TurnoGuardia
+from .forms import (
+    PacienteForm, PersonalCDIForm, InventarioEquipoForm, 
+    ControlEndocrinoForm, RutaMaternaForm, PlanificacionFamiliarForm, TurnoGuardiaForm
+)
 
 @login_required
 def inicio(request):
+    hoy = date.today()
     total_pacientes = Paciente.objects.count()
     total_personal = PersonalCDI.objects.count()
     total_equipos = InventarioEquipo.objects.count()
     total_consultas = ControlEndocrino.objects.count() 
+    guardias_hoy = TurnoGuardia.objects.filter(fecha=hoy).select_related('personal')
+    total_guardias_hoy = guardias_hoy.count()
 
     contexto = {
         'total_pacientes': total_pacientes,
         'total_personal': total_personal,
         'total_equipos': total_equipos,
-        'total_consultas': total_consultas, 
+        'total_consultas': total_consultas,
+        'guardias_hoy': guardias_hoy,
+        'total_guardias_hoy': total_guardias_hoy,
+        'hoy': hoy,
     }
     return render(request, 'gestion_cdi/inicio.html', contexto)
 
@@ -272,4 +278,83 @@ def lista_consultas(request):
         'consultas': consultas,
         'busqueda': busqueda
     })
+
+# ==========================================
+# 5. MÓDULO DE TURNOS Y GUARDIAS DEL PERSONAL
+# ==========================================
+
+@login_required
+def lista_guardias(request):
+    fecha_filtro = request.GET.get('fecha', '')
+    estado_filtro = request.GET.get('estado', '')
+    area_filtro = request.GET.get('area', '')
+    busqueda = request.GET.get('buscar', '')
+
+    guardias = TurnoGuardia.objects.select_related('personal', 'suplente').all()
+
+    if fecha_filtro:
+        guardias = guardias.filter(fecha=fecha_filtro)
+    if estado_filtro:
+        guardias = guardias.filter(estado=estado_filtro)
+    if area_filtro:
+        guardias = guardias.filter(area_servicio=area_filtro)
+    if busqueda:
+        guardias = guardias.filter(
+            Q(personal__nombre__icontains=busqueda) |
+            Q(personal__apellido__icontains=busqueda) |
+            Q(personal__cedula__icontains=busqueda) |
+            Q(observaciones__icontains=busqueda)
+        )
+
+    hoy = date.today()
+    total_hoy = TurnoGuardia.objects.filter(fecha=hoy).count()
+    total_en_curso = TurnoGuardia.objects.filter(estado='En Curso').count()
+    total_programadas = TurnoGuardia.objects.filter(estado='Programada').count()
+
+    contexto = {
+        'guardias': guardias,
+        'fecha_filtro': fecha_filtro,
+        'estado_filtro': estado_filtro,
+        'area_filtro': area_filtro,
+        'busqueda': busqueda,
+        'hoy': hoy,
+        'total_hoy': total_hoy,
+        'total_en_curso': total_en_curso,
+        'total_programadas': total_programadas,
+        'areas_disponibles': TurnoGuardia.AREAS,
+        'estados_disponibles': TurnoGuardia.ESTADOS,
+    }
+    return render(request, 'gestion_cdi/lista_guardias.html', contexto)
+
+@login_required
+def crear_guardia(request):
+    if request.method == 'POST':
+        form = TurnoGuardiaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_guardias')
+    else:
+        fecha_inicial = request.GET.get('fecha', str(date.today()))
+        form = TurnoGuardiaForm(initial={'fecha': fecha_inicial})
+    return render(request, 'gestion_cdi/crear_guardia.html', {'form': form})
+
+@login_required
+def editar_guardia(request, id):
+    guardia = get_object_or_404(TurnoGuardia, id=id)
+    if request.method == 'POST':
+        form = TurnoGuardiaForm(request.POST, instance=guardia)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_guardias')
+    else:
+        form = TurnoGuardiaForm(instance=guardia)
+    return render(request, 'gestion_cdi/editar_guardia.html', {'form': form, 'guardia': guardia})
+
+@login_required
+def borrar_guardia(request, id):
+    guardia = get_object_or_404(TurnoGuardia, id=id)
+    if request.method == 'POST':
+        guardia.delete()
+        return redirect('lista_guardias')
+    return render(request, 'gestion_cdi/borrar_guardia.html', {'guardia': guardia})
 
