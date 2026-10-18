@@ -230,15 +230,12 @@ class SectorCPTForm(forms.ModelForm):
 class IndicadorPoblacionalForm(forms.ModelForm):
     class Meta:
         model = IndicadorPoblacionalASIC
-        fields = '__all__'
+        fields = ['poblacion_total', 'familias_total', 'comunas_total', 'femenino_total', 'masculino_total', 'red_referencia']
         widgets = {
             'poblacion_total': forms.NumberInput(attrs={'class': 'form-control'}),
             'familias_total': forms.NumberInput(attrs={'class': 'form-control'}),
             'comunas_total': forms.NumberInput(attrs={'class': 'form-control'}),
             'femenino_total': forms.NumberInput(attrs={'class': 'form-control'}),
             'masculino_total': forms.NumberInput(attrs={'class': 'form-control'}),
-            'tanque_agua_litros': forms.NumberInput(attrs={'class': 'form-control'}),
-            'planta_electrica_gasoil_capacidad': forms.NumberInput(attrs={'class': 'form-control'}),
-            'planta_electrica_gasoil_actual': forms.NumberInput(attrs={'class': 'form-control'}),
             'red_referencia': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }

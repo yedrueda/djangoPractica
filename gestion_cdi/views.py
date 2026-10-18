@@ -377,9 +377,6 @@ def resumen_poblacional(request):
             comunas_total=8,
             femenino_total=28023,
             masculino_total=26952,
-            tanque_agua_litros=40000,
-            planta_electrica_gasoil_capacidad=150,
-            planta_electrica_gasoil_actual=20,
             red_referencia="CEO, Hospital Dr. Domingo Luciani, Clínica Popular Mesuca, CPT3 El Carmen"
         )
 

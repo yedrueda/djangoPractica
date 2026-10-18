@@ -149,40 +149,23 @@
         </div>
     </div>
 
-    <!-- Punto y Círculo & Recursos del CDI -->
+    <!-- Punto y Círculo & Red de Salud -->
     <div class="col-lg-5">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-header bg-white py-3 border-0">
                 <h6 class="mb-0 fw-bold text-dark">
-                    <i class="fa-solid fa-circle-nodes text-primary me-2"></i>Punto y Círculo & Logística Vital
+                    <i class="fa-solid fa-circle-nodes text-primary me-2"></i>Punto y Círculo & Red de Salud
                 </h6>
             </div>
             <div class="card-body pt-0">
-                <div class="mb-3">
-                    <span class="text-muted small fw-bold text-uppercase d-block mb-1">Red de Salud y Referencia:</span>
-                    <ul class="list-unstyled mb-0 small">
-                        <li class="mb-1"><i class="fa-solid fa-hospital text-danger me-2"></i><strong>Hospital Dr. Domingo Luciani</strong> (Referencia Central)</li>
-                        <li class="mb-1"><i class="fa-solid fa-clinic-medical text-primary me-2"></i><strong>Clínica Popular Mesuca</strong></li>
-                        <li class="mb-1"><i class="fa-solid fa-stethoscope text-success me-2"></i><strong>CPT3 El Carmen</strong></li>
-                        <li><i class="fa-solid fa-building-shield text-info me-2"></i><strong>CEO</strong> (Centro de Especialidades)</li>
-                    </ul>
-                </div>
-
-                <hr class="my-3">
-
                 <div>
-                    <span class="text-muted small fw-bold text-uppercase d-block mb-2">Capacidad Operativa del CDI:</span>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="small"><i class="fa-solid fa-faucet-drip text-info me-2"></i>Tanque de Agua:</span>
-                        <span class="badge bg-info text-dark fw-bold">{{ indicador.tanque_agua_litros|default:"40000" }} Litros</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="small"><i class="fa-solid fa-bolt text-warning me-2"></i>Planta Eléctrica:</span>
-                        <div>
-                            <span class="badge bg-warning text-dark fw-bold">{{ indicador.planta_electrica_gasoil_capacidad|default:"150" }} Lts Gasoil</span>
-                            <span class="badge bg-light text-muted border ms-1">Actual: {{ indicador.planta_electrica_gasoil_actual|default:"20" }} L</span>
-                        </div>
-                    </div>
+                    <span class="text-muted small fw-bold text-uppercase d-block mb-2">Red de Salud y Referencia del ASIC:</span>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2"><i class="fa-solid fa-hospital text-danger me-2"></i><strong>Hospital Dr. Domingo Luciani</strong> (Referencia Central)</li>
+                        <li class="mb-2"><i class="fa-solid fa-clinic-medical text-primary me-2"></i><strong>Clínica Popular Mesuca</strong></li>
+                        <li class="mb-2"><i class="fa-solid fa-stethoscope text-success me-2"></i><strong>CPT3 El Carmen</strong></li>
+                        <li class="mb-1"><i class="fa-solid fa-building-shield text-info me-2"></i><strong>CEO</strong> (Centro de Especialidades)</li>
+                    </ul>
                 </div>
             </div>
         </div>

@@ -269,11 +269,6 @@ class IndicadorPoblacionalASIC(models.Model):
     femenino_total = models.PositiveIntegerField(default=28023, verbose_name="Población Femenina (F)")
     masculino_total = models.PositiveIntegerField(default=26952, verbose_name="Población Masculina (M)")
     
-    # Capacidad Logística del CDI (de la pizarra)
-    tanque_agua_litros = models.PositiveIntegerField(default=40000, verbose_name="Capacidad Tanque de Agua (Litros)")
-    planta_electrica_gasoil_capacidad = models.PositiveIntegerField(default=150, verbose_name="Capacidad Planta Eléctrica (Litros Gasoil)")
-    planta_electrica_gasoil_actual = models.PositiveIntegerField(default=20, verbose_name="Gasoil Actual (Litros)")
-    
     # Puntos de Referencia y Red de Salud (Punto y Círculo)
     red_referencia = models.TextField(
         default="CEO, Hospital Dr. Domingo Luciani, Clínica Popular Mesuca, CPT3 El Carmen",
