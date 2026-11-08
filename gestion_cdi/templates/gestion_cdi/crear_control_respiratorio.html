@@ -1,0 +1,178 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Salud Respiratoria - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-0 text-dark fw-bold">Programa de Salud Respiratoria y Sala ERA</h3>
+        <p class="text-muted small mb-0">Evaluación clínica respiratoria, terapia de nebulización y pesquisa de TB</p>
+    </div>
+    <a href="{% url 'lista_consultas' %}" class="btn btn-light border shadow-sm text-muted">
+        <i class="fa-solid fa-arrow-left me-2"></i>Volver al Historial
+    </a>
+</div>
+
+<div class="card shadow-sm border-0 max-width-900 mx-auto">
+    <div class="card-body p-4 p-md-5">
+        <form method="post">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Verifique los campos del formulario:</strong>
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
+            <!-- 1. IDENTIFICACIÓN Y CONTROL OPERATIVO -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #0aa2c0;">
+                <i class="fa-solid fa-user-doctor me-2"></i> 1. Identificación y Control Operativo
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-5">
+                    {{ form.paciente.label_tag }}
+                    {{ form.paciente }}
+                    <div id="resumen_clinico_paciente" class="mt-2 p-2 rounded border bg-light small d-none"></div>
+                </div>
+                <div class="col-md-4">{{ form.atendido_por.label_tag }} {{ form.atendido_por }}</div>
+                <div class="col-md-3">{{ form.sede_tratamiento.label_tag }} {{ form.sede_tratamiento }}</div>
+                <div class="col-md-4">{{ form.pas.label_tag }} {{ form.pas }}</div>
+                <div class="col-md-4">{{ form.semana_epidemiologica.label_tag }} {{ form.semana_epidemiologica }}</div>
+                <div class="col-md-4">{{ form.severidad_cuadro.label_tag }} {{ form.severidad_cuadro }}</div>
+            </div>
+
+            <!-- 2. OXIMETRÍA Y FUNCIÓN RESPIRATORIA -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #0aa2c0;">
+                <i class="fa-solid fa-lungs me-2"></i> 2. Signos Vitales, Oximetría de Pulso y Flujo Espiratorio
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">{{ form.saturacion_oxigeno.label_tag }} {{ form.saturacion_oxigeno }}</div>
+                <div class="col-md-3">
+                    <label class="form-label">Estado de Oxigenación</label>
+                    <input type="text" id="id_estado_spo2" class="form-control fw-bold" readonly placeholder="Automático..." style="background-color: #e9ecef;">
+                </div>
+                <div class="col-md-3">{{ form.frecuencia_respiratoria.label_tag }} {{ form.frecuencia_respiratoria }}</div>
+                <div class="col-md-3">{{ form.flujo_espiratorio_pico.label_tag }} {{ form.flujo_espiratorio_pico }}</div>
+
+                <div class="col-md-4">{{ form.frecuencia_cardiaca.label_tag }} {{ form.frecuencia_cardiaca }}</div>
+                <div class="col-md-4">{{ form.tension_arterial.label_tag }} {{ form.tension_arterial }}</div>
+                <div class="col-md-4">{{ form.temperatura.label_tag }} {{ form.temperatura }}</div>
+            </div>
+
+            <!-- 3. PATOLOGÍAS RESPIRATORIAS Y SÍNTOMAS -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #0aa2c0;">
+                <i class="fa-solid fa-virus-covid me-2"></i> 3. Cuadro Clínico, Patologías y Procedimientos en Sala
+            </h6>
+            <div class="row g-3 mb-4 bg-light p-3 rounded border mx-0">
+                {% for field in form %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="col-md-4 mb-2">
+                            <div class="form-check form-switch fs-6">
+                                {{ field }} <label class="form-check-label fw-bold mt-1 ms-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- 4. TERAPIA RESPIRATORIA, BACILOSCOPIA Y RX -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #0aa2c0;">
+                <i class="fa-solid fa-mask-ventilator me-2"></i> 4. Detalle de Nebulización, Oxigenoterapia y Pesquisa TB
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">{{ form.esquema_nebulizacion.label_tag }} {{ form.esquema_nebulizacion }}</div>
+                <div class="col-md-3">{{ form.litros_oxigeno_min.label_tag }} {{ form.litros_oxigeno_min }}</div>
+                <div class="col-md-3">{{ form.resultado_bk.label_tag }} {{ form.resultado_bk }}</div>
+                <div class="col-md-12">{{ form.hallazgos_radiografia.label_tag }} {{ form.hallazgos_radiografia }}</div>
+            </div>
+
+            <!-- 5. RESOLUCIÓN CLÍNICA -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #0aa2c0;">
+                <i class="fa-solid fa-notes-medical me-2"></i> 5. Diagnóstico, Inhaloterapia y Seguimiento
+            </h6>
+            <div class="row g-3">
+                <div class="col-md-6">{{ form.diagnostico.label_tag }} {{ form.diagnostico }}</div>
+                <div class="col-md-6">{{ form.tratamiento.label_tag }} {{ form.tratamiento }}</div>
+                <div class="col-md-6">{{ form.medicamentos_entregados.label_tag }} {{ form.medicamentos_entregados }}</div>
+                <div class="col-md-6">{{ form.observaciones.label_tag }} {{ form.observaciones }}</div>
+                <div class="col-md-8">{{ form.referencia.label_tag }} {{ form.referencia }}</div>
+                <div class="col-md-4">{{ form.proxima_cita.label_tag }} {{ form.proxima_cita }}</div>
+            </div>
+
+            <div class="mt-5 text-end">
+                <button type="submit" class="btn btn-info text-white px-5 fw-bold shadow-sm">
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Control Respiratorio
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectPaciente = document.getElementById('id_paciente');
+        const bannerPaciente = document.getElementById('resumen_clinico_paciente');
+        if (selectPaciente && typeof TomSelect !== 'undefined') {
+            new TomSelect(selectPaciente, {
+                create: false,
+                placeholder: 'Escriba cédula, nombre o apellido del paciente...',
+                valueField: 'value',
+                labelField: 'text',
+                searchField: ['text'],
+                loadThrottle: 250,
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+                    fetch('/api/v1/pacientes/autocompletar/?q=' + encodeURIComponent(query), {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(json => callback((json.resultados || []).map(item => ({ value: String(item.cedula), text: item.texto_busqueda }))))
+                    .catch(() => callback());
+                },
+                onChange: function(value) {
+                    if (!value || !bannerPaciente) return;
+                    fetch('/api/v1/pacientes/autocompletar/?q=' + encodeURIComponent(value), {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(json => {
+                        const info = (json.resultados || []).find(p => String(p.cedula) === String(value));
+                        if (info) {
+                            bannerPaciente.classList.remove('d-none');
+                            bannerPaciente.innerHTML =
+                                '<strong>' + info.nombre_completo + '</strong> (' + info.edad + ') · ' +
+                                '<span class="text-danger fw-bold">Alergias:</span> ' + info.alergias;
+                        }
+                    });
+                }
+            });
+        }
+
+        const inputSpo2 = document.getElementById('id_saturacion_oxigeno');
+        const inputEstadoSpo2 = document.getElementById('id_estado_spo2');
+        const checkO2 = document.getElementById('id_oxigenoterapia');
+
+        function evaluarSpo2() {
+            const val = parseInt(inputSpo2 ? inputSpo2.value : 0, 10);
+            if (!val || !inputEstadoSpo2) return;
+            if (val >= 95) {
+                inputEstadoSpo2.value = val + '% (Normoxemia)';
+                inputEstadoSpo2.style.color = '#198754';
+            } else if (val >= 91) {
+                inputEstadoSpo2.value = val + '% (Hipoxemia Leve)';
+                inputEstadoSpo2.style.color = '#fd7e14';
+            } else {
+                inputEstadoSpo2.value = val + '% (Hipoxemia Severa - Requiere O2)';
+                inputEstadoSpo2.style.color = '#dc3545';
+                if (checkO2) checkO2.checked = true;
+            }
+        }
+        if (inputSpo2) {
+            inputSpo2.addEventListener('input', evaluarSpo2);
+            evaluarSpo2();
+        }
+    });
+</script>
+{% endblock %}
+

@@ -16,55 +16,109 @@
     <div class="card-body p-4 p-md-5">
         <form method="post">
             {% csrf_token %}
-            
-            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-user me-2"></i> 1. Identificación</h6>
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Verifique los campos del formulario:</strong>
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
+            <!-- 1. IDENTIFICACIÓN Y CONTROL OPERATIVO -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-user-doctor me-2"></i> 1. Identificación y Control Operativo (CAREMT)
+            </h6>
             <div class="row g-3 mb-4">
-                <div class="col-md-6">{{ form.paciente.label_tag }} {{ form.paciente }}</div>
+                <div class="col-md-5">
+                    {{ form.paciente.label_tag }}
+                    {{ form.paciente }}
+                    <div id="resumen_clinico_paciente" class="mt-2 p-2 rounded border bg-light small d-none"></div>
+                </div>
+                <div class="col-md-4">{{ form.atendido_por.label_tag }} {{ form.atendido_por }}</div>
                 <div class="col-md-3">{{ form.sede_tratamiento.label_tag }} {{ form.sede_tratamiento }}</div>
                 <div class="col-md-3">{{ form.pas.label_tag }} {{ form.pas }}</div>
+                <div class="col-md-3">{{ form.semana_epidemiologica.label_tag }} {{ form.semana_epidemiologica }}</div>
+                <div class="col-md-3">{{ form.tipo_diabetes.label_tag }} {{ form.tipo_diabetes }}</div>
+                <div class="col-md-3">{{ form.riesgo_cardiovascular.label_tag }} {{ form.riesgo_cardiovascular }}</div>
             </div>
 
-            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-heart-pulse me-2"></i> 2. Signos Vitales</h6>
+            <!-- 2. SIGNOS VITALES, ANTROPOMETRÍA E IMC AUTOMÁTICO -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-heart-pulse me-2"></i> 2. Signos Vitales, Antropometría y Perfil Glucémico Capilar
+            </h6>
             <div class="row g-3 mb-4">
                 <div class="col-md-3">{{ form.tension_arterial.label_tag }} {{ form.tension_arterial }}</div>
                 <div class="col-md-3">{{ form.frecuencia_cardiaca.label_tag }} {{ form.frecuencia_cardiaca }}</div>
                 <div class="col-md-3">{{ form.frecuencia_respiratoria.label_tag }} {{ form.frecuencia_respiratoria }}</div>
                 <div class="col-md-3">{{ form.temperatura.label_tag }} {{ form.temperatura }}</div>
-                <div class="col-md-4">{{ form.peso_kg.label_tag }} {{ form.peso_kg }}</div>
-                <div class="col-md-4">{{ form.talla_cm.label_tag }} {{ form.talla_cm }}</div>
+
+                <div class="col-md-3">{{ form.peso_kg.label_tag }} {{ form.peso_kg }}</div>
+                <div class="col-md-3">{{ form.talla_cm.label_tag }} {{ form.talla_cm }}</div>
+                <div class="col-md-3">
+                    <label class="form-label">IMC Calculado (kg/m²)</label>
+                    <input type="text" id="id_imc_calculado" class="form-control fw-bold" readonly placeholder="Automático..." style="background-color: #e9ecef;">
+                </div>
+                <div class="col-md-3">{{ form.circunferencia_abdominal_cm.label_tag }} {{ form.circunferencia_abdominal_cm }}</div>
+
                 <div class="col-md-4">{{ form.glucemia_ayunas.label_tag }} {{ form.glucemia_ayunas }}</div>
+                <div class="col-md-4">{{ form.glucemia_postprandial.label_tag }} {{ form.glucemia_postprandial }}</div>
+                <div class="col-md-4">{{ form.clasificacion_pie_diabetico.label_tag }} {{ form.clasificacion_pie_diabetico }}</div>
             </div>
 
-            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-clipboard-list me-2"></i> 3. Control Operativo Regional</h6>
+            <!-- 3. PATOLOGÍAS DEL CONTROL OPERATIVO REGIONAL -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-clipboard-list me-2"></i> 3. Censo de Patologías Crónicas (Control Operativo Regional)
+            </h6>
             <div class="row g-3 mb-4 bg-light p-3 rounded border mx-0">
                 {% for field in form %}
                     {% if field.field.widget.input_type == 'checkbox' %}
                         <div class="col-md-4 mb-2">
                             <div class="form-check form-switch fs-6">
-                                {{ field }} <label class="form-check-label fw-bold mt-1 ms-1">{{ field.label }}</label>
+                                {{ field }} <label class="form-check-label fw-bold mt-1 ms-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             </div>
                         </div>
                     {% endif %}
                 {% endfor %}
             </div>
 
-            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-vial me-2"></i> 4. Laboratorio Clínico</h6>
+            <!-- 4. LABORATORIO CLÍNICO INTEGRAL -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-vial me-2"></i> 4. Laboratorio Clínico (Metabólico, Renal, Lipídico y Tiroideo)
+            </h6>
             <div class="row g-3 mb-4">
                 <div class="col-md-2">{{ form.hba1c.label_tag }} {{ form.hba1c }}</div>
                 <div class="col-md-2">{{ form.creatinina.label_tag }} {{ form.creatinina }}</div>
                 <div class="col-md-2">{{ form.urea.label_tag }} {{ form.urea }}</div>
+                <div class="col-md-3">{{ form.acido_urico.label_tag }} {{ form.acido_urico }}</div>
+                <div class="col-md-3">{{ form.proteinuria_24h.label_tag }} {{ form.proteinuria_24h }}</div>
+
+                <div class="col-md-2">{{ form.colesterol_total.label_tag }} {{ form.colesterol_total }}</div>
+                <div class="col-md-2">{{ form.colesterol_hdl.label_tag }} {{ form.colesterol_hdl }}</div>
+                <div class="col-md-2">{{ form.colesterol_ldl.label_tag }} {{ form.colesterol_ldl }}</div>
+                <div class="col-md-2">{{ form.trigliceridos.label_tag }} {{ form.trigliceridos }}</div>
                 <div class="col-md-2">{{ form.tgo.label_tag }} {{ form.tgo }}</div>
                 <div class="col-md-2">{{ form.tgp.label_tag }} {{ form.tgp }}</div>
-                <div class="col-md-2">{{ form.colesterol_total.label_tag }} {{ form.colesterol_total }}</div>
-                <div class="col-md-3">{{ form.trigliceridos.label_tag }} {{ form.trigliceridos }}</div>
+
+                <div class="col-md-3">{{ form.tsh.label_tag }} {{ form.tsh }}</div>
+                <div class="col-md-3">{{ form.t4_libre.label_tag }} {{ form.t4_libre }}</div>
             </div>
 
-            <h6 class="fw-bold text-uppercase mb-3" style="color: var(--accent-blue);"><i class="fa-solid fa-notes-medical me-2"></i> 5. Conducta y Resolución</h6>
+            <!-- 5. CONDUCTA, DISPENSACIÓN Y SEGUIMIENTO -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-notes-medical me-2"></i> 5. Conducta Terapéutica, Dispensación de Insumos y Seguimiento
+            </h6>
             <div class="row g-3">
+                <div class="col-md-6">{{ form.esquema_insulina.label_tag }} {{ form.esquema_insulina }}</div>
+                <div class="col-md-3">{{ form.tiras_reactivas_entregadas.label_tag }} {{ form.tiras_reactivas_entregadas }}</div>
+                <div class="col-md-3">{{ form.proxima_cita.label_tag }} {{ form.proxima_cita }}</div>
+
                 <div class="col-md-6">{{ form.medicamentos_entregados.label_tag }} {{ form.medicamentos_entregados }}</div>
                 <div class="col-md-6">{{ form.referencia.label_tag }} {{ form.referencia }}</div>
-                <div class="col-md-12">{{ form.diagnostico.label_tag }} {{ form.diagnostico }}</div>
-                <div class="col-md-12">{{ form.tratamiento.label_tag }} {{ form.tratamiento }}</div>
+
+                <div class="col-md-6">{{ form.diagnostico.label_tag }} {{ form.diagnostico }}</div>
+                <div class="col-md-6">{{ form.tratamiento.label_tag }} {{ form.tratamiento }}</div>
+
+                <div class="col-md-12">{{ form.conducta.label_tag }} {{ form.conducta }}</div>
+
                 <div class="col-md-4">{{ form.otras_patologias.label_tag }} {{ form.otras_patologias }}</div>
                 <div class="col-md-4">{{ form.alergias.label_tag }} {{ form.alergias }}</div>
                 <div class="col-md-4">{{ form.observaciones_finales.label_tag }} {{ form.observaciones_finales }}</div>
@@ -82,12 +136,96 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const selectPaciente = document.getElementById('id_paciente');
-        if (selectPaciente) {
+        const bannerPaciente = document.getElementById('resumen_clinico_paciente');
+        const inputAlergias = document.getElementById('id_alergias');
+
+        if (selectPaciente && typeof TomSelect !== 'undefined') {
             new TomSelect(selectPaciente, { 
-                create: false, 
-                sortField: { field: "text", direction: "asc" }, 
-                searchField: ['text'] 
+                create: false,
+                placeholder: 'Escriba cédula, nombre o apellido del paciente...',
+                valueField: 'value',
+                labelField: 'text',
+                searchField: ['text'],
+                loadThrottle: 250,
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+                    fetch('/api/v1/pacientes/autocompletar/?q=' + encodeURIComponent(query), {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    })
+                    .then(response => response.json())
+                    .then(json => {
+                        const opciones = (json.resultados || []).map(item => ({
+                            value: String(item.cedula),
+                            text: item.texto_busqueda,
+                            datos: item
+                        }));
+                        callback(opciones);
+                    })
+                    .catch(() => callback());
+                },
+                onChange: function(value) {
+                    if (!value || !bannerPaciente) {
+                        if (bannerPaciente) bannerPaciente.classList.add('d-none');
+                        return;
+                    }
+                    fetch('/api/v1/pacientes/autocompletar/?q=' + encodeURIComponent(value), {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(json => {
+                        const info = (json.resultados || []).find(p => String(p.cedula) === String(value));
+                        if (info) {
+                            bannerPaciente.classList.remove('d-none');
+                            bannerPaciente.innerHTML =
+                                '<strong><i class="fa-solid fa-circle-info text-primary me-1"></i> ' + info.nombre_completo + '</strong> (' + info.edad + ' · Grupo ' + info.grupo_sanguineo + ')<br>' +
+                                '<span class="text-danger fw-bold">Alergias:</span> ' + info.alergias + '<br>' +
+                                '<span class="text-muted">Antecedentes:</span> ' + info.antecedentes_personales;
+                            if (inputAlergias && !inputAlergias.value) {
+                                inputAlergias.value = info.alergias;
+                            }
+                        }
+                    })
+                    .catch(() => {});
+                }
             });
+        }
+
+        const inputPeso = document.getElementById('id_peso_kg');
+        const inputTalla = document.getElementById('id_talla_cm');
+        const inputIMC = document.getElementById('id_imc_calculado');
+        const checkSobrepeso = document.getElementById('id_sobre_peso');
+        const checkObesidad = document.getElementById('id_obesidad');
+
+        function actualizarIMC() {
+            const peso = parseFloat(inputPeso ? inputPeso.value : 0);
+            const tallaCm = parseFloat(inputTalla ? inputTalla.value : 0);
+            if (peso > 0 && tallaCm > 0) {
+                const tallaM = tallaCm / 100.0;
+                const imc = (peso / (tallaM * tallaM)).toFixed(2);
+                let categoria = 'Normopeso';
+                if (imc < 18.5) categoria = 'Bajo Peso';
+                else if (imc < 25.0) categoria = 'Normopeso';
+                else if (imc < 30.0) categoria = 'Sobrepeso';
+                else if (imc < 35.0) categoria = 'Obesidad I';
+                else if (imc < 40.0) categoria = 'Obesidad II';
+                else categoria = 'Obesidad III';
+
+                if (inputIMC) inputIMC.value = imc + ' (' + categoria + ')';
+                if (checkSobrepeso && checkObesidad) {
+                    checkSobrepeso.checked = (imc >= 25.0 && imc < 30.0);
+                    checkObesidad.checked = (imc >= 30.0);
+                }
+            } else if (inputIMC) {
+                inputIMC.value = '';
+            }
+        }
+
+        if (inputPeso && inputTalla) {
+            inputPeso.addEventListener('input', actualizarIMC);
+            inputTalla.addEventListener('input', actualizarIMC);
+            actualizarIMC();
         }
     });
 </script>

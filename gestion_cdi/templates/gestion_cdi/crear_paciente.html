@@ -2,54 +2,174 @@
 {% block titulo %}Registrar Paciente - SIGE{% endblock %}
 
 {% block contenido %}
-<div class="card shadow-sm max-width-700 mx-auto">
-    <div class="card-header bg-white py-3">
-        <h5 class="m-0 fw-bold text-dark"><i class="fa-solid fa-user-plus me-2" style="color: var(--accent-blue);"></i> Registro de Paciente</h5>
+<div class="card shadow-sm mx-auto" style="max-width: 900px;">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="m-0 fw-bold text-dark">
+            <i class="fa-solid fa-user-plus me-2" style="color: var(--accent-blue);"></i>
+            Ficha de Admisión de Paciente Nuevo (CDI El Llanito)
+        </h5>
+        <span class="badge bg-primary">ASIC El Llanito</span>
     </div>
     <div class="card-body p-4">
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Por favor verifique los datos ingresados:</strong>
+                {{ form.errors }}
+            </div>
+        {% endif %}
         <form method="post">
             {% csrf_token %}
-            
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label text-muted small fw-bold">Documento de Identidad</label>
+
+            <!-- 1. IDENTIFICACIÓN Y DATOS SOCIODEMOGRÁFICOS -->
+            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                <i class="fa-solid fa-id-card me-1"></i> 1. Identificación y Datos Sociodemográficos
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Documento de Identidad *</label>
                     <div class="input-group">
                         {{ form.tipo_cedula }}
                         {{ form.cedula }}
                     </div>
                 </div>
-
-                <div class="col-md-6">
-                    <label class="form-label text-muted small fw-bold">Sexo</label>
-                    {{ form.sexo }}
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label text-muted small fw-bold">Nombres</label>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Nombres *</label>
                     {{ form.nombre }}
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label text-muted small fw-bold">Apellidos</label>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Apellidos *</label>
                     {{ form.apellido }}
                 </div>
-                
-                <div class="col-md-6">
-                    <label class="form-label text-muted small fw-bold">Fecha de Nacimiento</label>
+
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Fecha de Nacimiento *</label>
                     {{ form.fecha_nacimiento }}
                 </div>
-                
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label class="form-label text-muted small fw-bold">Edad Calculada</label>
-                    <input type="text" id="id_edad_calculada" class="form-control" readonly placeholder="Se calculará automáticamente..." style="background-color: #e9ecef; font-weight: bold; color: var(--text-dark);">
+                    <input type="text" id="id_edad_calculada" class="form-control" readonly placeholder="Automático..." style="background-color: #e9ecef; font-weight: bold; color: var(--text-dark);">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Sexo *</label>
+                    {{ form.sexo }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Estado Civil</label>
+                    {{ form.estado_civil }}
                 </div>
 
-                <div class="col-md-6">
-                    <label class="form-label text-muted small fw-bold">Teléfono</label>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Ocupación u Oficio</label>
+                    {{ form.ocupacion }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Teléfono de Contacto</label>
                     {{ form.telefono }}
                 </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Correo Electrónico</label>
+                    {{ form.correo }}
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check form-switch mt-2">
+                        {{ form.carnet_de_la_patria }}
+                        <label class="form-check-label small fw-bold text-muted" for="{{ form.carnet_de_la_patria.id_for_label }}">
+                            Posee Carnet de la Patria
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. ADSCRIPCIÓN TERRITORIAL (PUNTO Y CÍRCULO) -->
+            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                <i class="fa-solid fa-map-location-dot me-1"></i> 2. Ubicación Territorial (Punto y Círculo ASIC)
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">ASIC</label>
+                    {{ form.asic }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Municipio</label>
+                    {{ form.municipio }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Parroquia</label>
+                    {{ form.parroquia }}
+                </div>
                 <div class="col-md-6">
-                    <label class="form-label text-muted small fw-bold">Dirección</label>
+                    <label class="form-label text-muted small fw-bold">Comuna de Adscripción</label>
+                    {{ form.comuna }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold">Consultorio Popular (CPT) / Sector</label>
+                    {{ form.sector_cpt }}
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label text-muted small fw-bold">Dirección de Habitación / Punto de Referencia *</label>
                     {{ form.direccion }}
+                </div>
+            </div>
+
+            <!-- 3. CONTACTO DE EMERGENCIA -->
+            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                <i class="fa-solid fa-phone-volume me-1"></i> 3. Familiar o Contacto de Emergencia
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-5">
+                    <label class="form-label text-muted small fw-bold">Nombre y Apellido del Familiar</label>
+                    {{ form.contacto_emergencia_nombre }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Parentesco</label>
+                    {{ form.contacto_emergencia_parentesco }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Teléfono de Emergencia</label>
+                    {{ form.contacto_emergencia_telefono }}
+                </div>
+            </div>
+
+            <!-- 4. PERFIL CLÍNICO BASE Y TRIAGE -->
+            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                <i class="fa-solid fa-notes-medical me-1"></i> 4. Perfil Clínico Base y Alertas Médicas
+            </h6>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Grupo Sanguíneo y Factor Rh</label>
+                    {{ form.grupo_sanguineo }}
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="form-check form-switch mt-4">
+                        {{ form.gestante }}
+                        <label class="form-check-label small fw-bold text-muted" for="{{ form.gestante.id_for_label }}">
+                            Paciente Gestante (Ruta Materna)
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="form-check form-switch mt-4">
+                        {{ form.posee_discapacidad }}
+                        <label class="form-check-label small fw-bold text-muted" for="{{ form.posee_discapacidad.id_for_label }}">
+                            Posee Alguna Discapacidad
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label text-muted small fw-bold">Detalle de Discapacidad (si aplica)</label>
+                    {{ form.detalle_discapacidad }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Alergias Medicamentosas / Alimentarias</label>
+                    {{ form.alergias }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Antecedentes Patológicos Personales</label>
+                    {{ form.antecedentes_personales }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Antecedentes Familiares</label>
+                    {{ form.antecedentes_familiares }}
                 </div>
             </div>
 

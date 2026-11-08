@@ -58,10 +58,22 @@ urlpatterns = [
     path('consultas/endocrino/<int:pk>/', views.detalle_control_endocrino, name='detalle_control_endocrino'),
     path('consultas/endocrino/<int:pk>/editar/', views.editar_control_endocrino, name='editar_control_endocrino'),
     path('consultas/endocrino/<int:pk>/eliminar/', views.eliminar_control_endocrino, name='eliminar_control_endocrino'),
+
+    # Programa 2: Salud Respiratoria y Sala de Terapia Respiratoria
+    path('consultas/respiratorio/nuevo/', views.crear_control_respiratorio, name='crear_control_respiratorio'),
+    path('consultas/respiratorio/<int:pk>/', views.detalle_control_respiratorio, name='detalle_control_respiratorio'),
+    path('consultas/respiratorio/<int:pk>/editar/', views.editar_control_respiratorio, name='editar_control_respiratorio'),
+    path('consultas/respiratorio/<int:pk>/eliminar/', views.eliminar_control_respiratorio, name='eliminar_control_respiratorio'),
     
-    # Programa 2: Ruta Materna (Estructura base - Próximamente activa)
+    # Programa 3: Ruta Materna (Control Prenatal y Parto Humanizado)
     path('consultas/ruta-materna/nuevo/', views.crear_ruta_materna, name='crear_ruta_materna'),
+    path('consultas/ruta-materna/<int:pk>/', views.detalle_ruta_materna, name='detalle_ruta_materna'),
+    path('consultas/ruta-materna/<int:pk>/editar/', views.editar_ruta_materna, name='editar_ruta_materna'),
+    path('consultas/ruta-materna/<int:pk>/eliminar/', views.eliminar_ruta_materna, name='eliminar_ruta_materna'),
     
-    # Programa 3: Planificación Familiar (Estructura base - Próximamente activa)
+    # Programa 4: Educación Sexual y Planificación Familiar
     path('consultas/planificacion/nuevo/', views.crear_planificacion_familiar, name='crear_planificacion_familiar'),
+    path('consultas/planificacion/<int:pk>/', views.detalle_planificacion_familiar, name='detalle_planificacion_familiar'),
+    path('consultas/planificacion/<int:pk>/editar/', views.editar_planificacion_familiar, name='editar_planificacion_familiar'),
+    path('consultas/planificacion/<int:pk>/eliminar/', views.eliminar_planificacion_familiar, name='eliminar_planificacion_familiar'),
 ]

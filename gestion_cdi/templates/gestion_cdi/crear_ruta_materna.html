@@ -1,0 +1,183 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Ruta Materna - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-0 text-dark fw-bold">Programa Ruta Materna y Parto Humanizado</h3>
+        <p class="text-muted small mb-0">Ficha oficial de control prenatal, bienestar materno-fetal y riesgo obstétrico</p>
+    </div>
+    <a href="{% url 'lista_consultas' %}" class="btn btn-light border shadow-sm text-muted">
+        <i class="fa-solid fa-arrow-left me-2"></i>Volver al Historial
+    </a>
+</div>
+
+<div class="card shadow-sm border-0 max-width-900 mx-auto">
+    <div class="card-body p-4 p-md-5">
+        <form method="post">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Verifique los campos del formulario:</strong>
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
+            <!-- 1. IDENTIFICACIÓN Y CAPTACIÓN PRENATAL -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #e84393;">
+                <i class="fa-solid fa-person-pregnant me-2"></i> 1. Identificación de la Gestante y Captación Comunitaria
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-5">
+                    {{ form.paciente.label_tag }}
+                    {{ form.paciente }}
+                    <div id="resumen_clinico_paciente" class="mt-2 p-2 rounded border bg-light small d-none"></div>
+                </div>
+                <div class="col-md-4">{{ form.atendido_por.label_tag }} {{ form.atendido_por }}</div>
+                <div class="col-md-3">{{ form.pas.label_tag }} {{ form.pas }}</div>
+                <div class="col-md-3">{{ form.numero_control_prenatal.label_tag }} {{ form.numero_control_prenatal }}</div>
+                <div class="col-md-4">{{ form.eje.label_tag }} {{ form.eje }}</div>
+                <div class="col-md-5">{{ form.riesgo_obstetrico.label_tag }} {{ form.riesgo_obstetrico }}</div>
+                <div class="col-md-12">{{ form.direccion_detallada.label_tag }} {{ form.direccion_detallada }}</div>
+            </div>
+
+            <!-- 2. EDAD GESTACIONAL Y FÓRMULA OBSTÉTRICA -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #e84393;">
+                <i class="fa-solid fa-calendar-check me-2"></i> 2. Cálculo Obstétrico (FUM / FPP) y Fórmula G-P-C-A
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">{{ form.fum.label_tag }} {{ form.fum }}</div>
+                <div class="col-md-4">{{ form.fpp.label_tag }} {{ form.fpp }}</div>
+                <div class="col-md-4">{{ form.semanas_embarazo.label_tag }} {{ form.semanas_embarazo }}</div>
+
+                <div class="col-md-3">{{ form.gestas.label_tag }} {{ form.gestas }}</div>
+                <div class="col-md-3">{{ form.paras.label_tag }} {{ form.paras }}</div>
+                <div class="col-md-3">{{ form.cesareas.label_tag }} {{ form.cesareas }}</div>
+                <div class="col-md-3">{{ form.abortos.label_tag }} {{ form.abortos }}</div>
+            </div>
+
+            <!-- 3. EVALUACIÓN MATERNO-FETAL -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #e84393;">
+                <i class="fa-solid fa-baby me-2"></i> 3. Constantes Maternas y Bienestar Fetal
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">{{ form.tension_arterial.label_tag }} {{ form.tension_arterial }}</div>
+                <div class="col-md-3">{{ form.peso_kg.label_tag }} {{ form.peso_kg }}</div>
+                <div class="col-md-3">{{ form.talla_cm.label_tag }} {{ form.talla_cm }}</div>
+                <div class="col-md-3">{{ form.altura_uterina_cm.label_tag }} {{ form.altura_uterina_cm }}</div>
+
+                <div class="col-md-4">{{ form.frecuencia_cardiaca_fetal.label_tag }} {{ form.frecuencia_cardiaca_fetal }}</div>
+                <div class="col-md-4">{{ form.movimientos_fetales.label_tag }} {{ form.movimientos_fetales }}</div>
+                <div class="col-md-4">{{ form.presentacion_fetal.label_tag }} {{ form.presentacion_fetal }}</div>
+            </div>
+
+            <!-- 4. PARACLÍNICOS Y SUPLEMENTACIÓN PRENATAL -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #e84393;">
+                <i class="fa-solid fa-vials me-2"></i> 4. Laboratorio Prenatal, Inmunización y Micronutrientes
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">{{ form.hemoglobina.label_tag }} {{ form.hemoglobina }}</div>
+                <div class="col-md-3">{{ form.glucemia_ayunas.label_tag }} {{ form.glucemia_ayunas }}</div>
+                <div class="col-md-3">{{ form.vdrl_estatus.label_tag }} {{ form.vdrl_estatus }}</div>
+                <div class="col-md-3">{{ form.vih_estatus.label_tag }} {{ form.vih_estatus }}</div>
+            </div>
+            <div class="row g-3 mb-4 bg-light p-3 rounded border mx-0">
+                {% for field in form %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="col-md-4 mb-2">
+                            <div class="form-check form-switch fs-6">
+                                {{ field }} <label class="form-check-label fw-bold mt-1 ms-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- 5. PLAN DE PARTO Y SEGUIMIENTO -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2" style="color: #e84393;">
+                <i class="fa-solid fa-hospital-user me-2"></i> 5. Signos de Alarma, Plan de Parto y Seguimiento
+            </h6>
+            <div class="row g-3">
+                <div class="col-md-6">{{ form.centro_parto_programado.label_tag }} {{ form.centro_parto_programado }}</div>
+                <div class="col-md-6">{{ form.proxima_cita.label_tag }} {{ form.proxima_cita }}</div>
+                <div class="col-md-12">{{ form.signos_alarma.label_tag }} {{ form.signos_alarma }}</div>
+                <div class="col-md-6">{{ form.diagnostico.label_tag }} {{ form.diagnostico }}</div>
+                <div class="col-md-6">{{ form.tratamiento.label_tag }} {{ form.tratamiento }}</div>
+                <div class="col-md-12">{{ form.observaciones.label_tag }} {{ form.observaciones }}</div>
+            </div>
+
+            <div class="mt-5 text-end">
+                <button type="submit" class="btn px-5 fw-bold text-white shadow-sm" style="background-color: #e84393;">
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Control Prenatal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectPaciente = document.getElementById('id_paciente');
+        const bannerPaciente = document.getElementById('resumen_clinico_paciente');
+        if (selectPaciente && typeof TomSelect !== 'undefined') {
+            new TomSelect(selectPaciente, {
+                create: false,
+                placeholder: 'Escriba cédula, nombre o apellido de la gestante...',
+                valueField: 'value',
+                labelField: 'text',
+                searchField: ['text'],
+                loadThrottle: 250,
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+                    fetch('/api/v1/pacientes/autocompletar/?q=' + encodeURIComponent(query), {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(json => callback((json.resultados || []).map(item => ({ value: String(item.cedula), text: item.texto_busqueda }))))
+                    .catch(() => callback());
+                },
+                onChange: function(value) {
+                    if (!value || !bannerPaciente) return;
+                    fetch('/api/v1/pacientes/autocompletar/?q=' + encodeURIComponent(value), {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(json => {
+                        const info = (json.resultados || []).find(p => String(p.cedula) === String(value));
+                        if (info) {
+                            bannerPaciente.classList.remove('d-none');
+                            bannerPaciente.innerHTML =
+                                '<strong>' + info.nombre_completo + '</strong> (' + info.edad + ' · Grupo ' + info.grupo_sanguineo + ')<br>' +
+                                '<span class="text-danger fw-bold">Alergias:</span> ' + info.alergias;
+                        }
+                    });
+                }
+            });
+        }
+
+        // Cálculo automático de FPP (Regla de Naegele: FUM + 280 días) y Semanas de Gestación
+        const inputFum = document.getElementById('id_fum');
+        const inputFpp = document.getElementById('id_fpp');
+        const inputSemanas = document.getElementById('id_semanas_embarazo');
+
+        if (inputFum) {
+            inputFum.addEventListener('change', function() {
+                if (!this.value) return;
+                const fumDate = new Date(this.value + 'T00:00:00');
+                const hoy = new Date();
+                const diffDias = Math.floor((hoy - fumDate) / (1000 * 60 * 60 * 24));
+                if (diffDias > 0 && diffDias <= 300 && inputSemanas && !inputSemanas.value) {
+                    inputSemanas.value = Math.floor(diffDias / 7);
+                }
+                if (inputFpp && !inputFpp.value) {
+                    const fppDate = new Date(fumDate.getTime() + (280 * 24 * 60 * 60 * 1000));
+                    inputFpp.value = fppDate.toISOString().split('T')[0];
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+

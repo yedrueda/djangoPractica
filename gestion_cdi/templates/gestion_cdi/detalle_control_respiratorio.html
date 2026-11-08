@@ -1,0 +1,98 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Hoja Respiratoria - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4 no-print">
+    <div>
+        <h3 class="mb-0 text-dark fw-bold">Detalle de Evaluación de Salud Respiratoria</h3>
+        <p class="text-muted small mb-0">ID: #{{ consulta.id }} | Fecha: {{ consulta.fecha_atencion|date:"d/m/Y" }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button onclick="window.print();" class="btn btn-light border shadow-sm text-muted">
+            <i class="fa-solid fa-print me-2"></i>Imprimir Reporte
+        </button>
+        <a href="{% url 'lista_consultas' %}" class="btn btn-primary shadow-sm" style="background-color: var(--accent-blue); border: none;">
+            <i class="fa-solid fa-arrow-left me-2"></i>Volver al Historial
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 max-width-900 mx-auto" style="border-top: 6px solid #0dcaf0 !important;">
+    <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+            <h5 class="fw-bold text-uppercase text-dark mb-1">Programa de Salud Respiratoria y Sala ERA</h5>
+            <h6 class="text-muted text-uppercase small">Centro de Diagnóstico Integral (CDI) "El Llanito"</h6>
+        </div>
+
+        <div class="row g-3 bg-light p-3 rounded border mb-4">
+            <div class="col-md-4">
+                <span class="text-muted small d-block">Paciente:</span>
+                <strong class="text-dark fs-5">{{ consulta.paciente.nombre }} {{ consulta.paciente.apellido }}</strong>
+                <span class="d-block small text-muted">C.I: {{ consulta.paciente.tipo_cedula }}-{{ consulta.paciente.cedula }} ({{ consulta.paciente.edad }})</span>
+            </div>
+            <div class="col-md-4">
+                <span class="text-muted small d-block">Severidad y Consulta:</span>
+                <span class="badge bg-info text-dark">{{ consulta.severidad_cuadro }}</span>
+                <span class="d-block small text-muted mt-1">P.A.S.: {{ consulta.pas }} | Sem. Epid: {{ consulta.semana_epidemiologica|default:"--" }}</span>
+            </div>
+            <div class="col-md-4">
+                <span class="text-muted small d-block">Estado de Oxigenación:</span>
+                <strong class="text-primary">{{ consulta.estado_oxigenacion }}</strong>
+                <span class="d-block small text-muted">BK: {{ consulta.resultado_bk }}</span>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block">Saturación O2 (SpO2)</span>
+                    <span class="fw-bold text-dark fs-4">{{ consulta.saturacion_oxigeno|default:"--" }}%</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block">Fr. Respiratoria</span>
+                    <span class="fw-bold text-dark fs-4">{{ consulta.frecuencia_respiratoria|default:"--" }}</span> <small>rpm</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block">Flujo Pico (PEF)</span>
+                    <span class="fw-bold text-dark fs-4">{{ consulta.flujo_espiratorio_pico|default:"--" }}</span> <small>L/min</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block">T.A. / Temp.</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.tension_arterial|default:"--" }}</span> | <span class="fw-bold">{{ consulta.temperatura|default:"--" }}°C</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="p-3 border rounded bg-white h-100">
+                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Terapia en Sala ERA y Radiología:</span>
+                    <p class="mb-1 text-dark"><strong>Nebulización:</strong> {{ consulta.esquema_nebulizacion|default:"No requerida" }}</p>
+                    <p class="mb-1 text-dark"><strong>Rx de Tórax:</strong> {{ consulta.hallazgos_radiografia|default:"Sin reporte radiológico" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded bg-white h-100">
+                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Inhaladores y Medicamentos Entregados:</span>
+                    <p class="mb-1 text-dark">{{ consulta.medicamentos_entregados|default:"Ninguno reportado" }}</p>
+                    <small class="text-primary fw-bold">Próximo Control: {{ consulta.proxima_cita|date:"d/m/Y"|default:"Por programar" }}</small>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="p-3 border rounded bg-white">
+                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Diagnóstico y Plan Terapéutico:</span>
+                    <p class="mb-2 text-dark"><strong>Diagnóstico:</strong> {{ consulta.diagnostico|default:"--" }}</p>
+                    <p class="mb-0 text-dark"><strong>Tratamiento:</strong> {{ consulta.tratamiento|default:"--" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

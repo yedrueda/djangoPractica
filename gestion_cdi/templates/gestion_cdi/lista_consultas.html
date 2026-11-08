@@ -13,24 +13,36 @@
 </div>
 
 <div class="row mb-4">
-    <div class="col-md-6 col-lg-5">
-        <form method="get" action="{% url 'lista_consultas' %}" class="d-flex gap-2">
-            <div class="input-group">
-                <span class="input-group-text bg-white border-end-0 text-muted">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input type="text" name="buscar" class="form-control border-start-0 shadow-sm" 
-                       placeholder="Buscar por cédula, nombre o apellido..." value="{{ busqueda }}">
+    <div class="col-md-9 col-lg-8">
+        <form method="get" action="{% url 'lista_consultas' %}" class="row g-2">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" name="buscar" class="form-control border-start-0 shadow-sm" 
+                           placeholder="Buscar por cédula, nombre o apellido..." value="{{ busqueda }}">
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary fw-bold px-4 shadow-sm" style="background-color: var(--accent-blue); border: none;">
-                Buscar
-            </button>
-            
-            {% if busqueda %}
-                <a href="{% url 'lista_consultas' %}" class="btn btn-light border fw-bold text-muted shadow-sm">
-                    Limpiar
-                </a>
-            {% endif %}
+            <div class="col-md-4">
+                <select name="programa" class="form-select shadow-sm">
+                    <option value="">Todos los Programas (4)</option>
+                    <option value="endocrino" {% if programa_filtro == 'endocrino' %}selected{% endif %}>Endocrino-Metabólico</option>
+                    <option value="respiratorio" {% if programa_filtro == 'respiratorio' %}selected{% endif %}>Salud Respiratoria</option>
+                    <option value="materna" {% if programa_filtro == 'materna' %}selected{% endif %}>Ruta Materna</option>
+                    <option value="planificacion" {% if programa_filtro == 'planificacion' %}selected{% endif %}>Educación Sexual</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary fw-bold px-3 shadow-sm" style="background-color: var(--accent-blue); border: none;">
+                    Filtrar
+                </button>
+                {% if busqueda or programa_filtro %}
+                    <a href="{% url 'lista_consultas' %}" class="btn btn-light border fw-bold text-muted shadow-sm" title="Limpiar">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </a>
+                {% endif %}
+            </div>
         </form>
     </div>
 </div>
@@ -44,49 +56,49 @@
                         <th class="ps-4 py-3">Fecha</th>
                         <th class="py-3">Paciente</th>
                         <th class="py-3">Programa</th>
-                        <th class="py-3">Signos Vitales Clave</th>
-                        <th class="py-3">Diagnóstico Preliminar</th>
+                        <th class="py-3">Indicadores Clave</th>
+                        <th class="py-3">Diagnóstico / Resumen</th>
                         <th class="py-3 text-end pe-4">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for consulta in consultas %}
+                    {% for item in registros_unificados %}
                     <tr>
                         <td class="ps-4 text-secondary small fw-bold">
-                            {{ consulta.fecha_atencion|date:"d/m/Y" }}
+                            {{ item.fecha|date:"d/m/Y" }}
                         </td>
                         
                         <td>
-                            <div class="fw-bold text-dark">{{ consulta.paciente.nombre }} {{ consulta.paciente.apellido }}</div>
-                            <span class="text-muted small">C.I: {{ consulta.paciente.tipo_cedula }}-{{ consulta.paciente.cedula }}</span>
+                            <div class="fw-bold text-dark">{{ item.paciente.nombre }} {{ item.paciente.apellido }}</div>
+                            <span class="text-muted small">C.I: {{ item.paciente.tipo_cedula }}-{{ item.paciente.cedula }}</span>
                         </td>
                         
                         <td>
-                            <span class="badge rounded-pill px-2.5 py-1.5 bg-opacity-10 text-primary bg-primary small fw-bold">
-                                Control Endocrino
+                            <span class="badge rounded-pill px-2.5 py-1.5 bg-opacity-10 {{ item.programa_badge }} small fw-bold">
+                                {{ item.programa_nombre }}
                             </span>
                         </td>
                         
                         <td class="small text-muted">
-                            <div><i class="fa-solid fa-heart text-danger me-1"></i> T.A: {{ consulta.tension_arterial|default:"--" }} mmHg</div>
-                            <div><i class="fa-solid fa-droplet text-info me-1"></i> Glicemia: {{ consulta.glucemia_ayunas|default:"--" }} mg/dL</div>
+                            <div><i class="fa-solid fa-notes-medical text-primary me-1"></i> {{ item.signo_1 }}</div>
+                            <div><i class="fa-solid fa-chart-line text-secondary me-1"></i> {{ item.signo_2 }}</div>
                         </td>
                         
                         <td>
-                            <p class="mb-0 text-truncate small" style="max-width: 250px;" title="{{ consulta.diagnostico }}">
-                                {{ consulta.diagnostico|default:"Sin diagnóstico registrado" }}
+                            <p class="mb-0 text-truncate small" style="max-width: 260px;" title="{{ item.diagnostico }}">
+                                {{ item.diagnostico }}
                             </p>
                         </td>
                         
                         <td class="text-end pe-4">
                             <div class="btn-group shadow-sm" role="group" aria-label="Acciones de Consulta">
-                                <a href="{% url 'detalle_control_endocrino' consulta.id %}" class="btn btn-sm btn-light border text-primary px-2.5" title="Ver Hoja Médica">
+                                <a href="{% url item.url_detalle item.id %}" class="btn btn-sm btn-light border text-primary px-2.5" title="Ver Hoja Médica">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="{% url 'editar_control_endocrino' consulta.id %}" class="btn btn-sm btn-light border text-warning px-2.5" title="Modificar Registro">
+                                <a href="{% url item.url_editar item.id %}" class="btn btn-sm btn-light border text-warning px-2.5" title="Modificar Registro">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <a href="{% url 'eliminar_control_endocrino' consulta.id %}" class="btn btn-sm btn-light border text-danger px-2.5" title="Eliminar Consulta" 
+                                <a href="{% url item.url_eliminar item.id %}" class="btn btn-sm btn-light border text-danger px-2.5" title="Eliminar Consulta" 
                                    onclick="return confirm('¿Está completamente seguro de eliminar esta evaluación médica? Esta acción no se puede deshacer.');">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
@@ -98,7 +110,7 @@
                         <td colspan="6" class="text-center py-5">
                             <div class="text-muted mb-2"><i class="fa-solid fa-folder-open fa-2x text-light-sm"></i></div>
                             <h6 class="fw-bold text-secondary mb-1">No se encontraron evaluaciones</h6>
-                            <p class="text-muted small mb-0">Verifique los datos de búsqueda o registre una nueva consulta.</p>
+                            <p class="text-muted small mb-0">Verifique los datos de búsqueda o registre una nueva consulta en cualquiera de los 4 programas.</p>
                         </td>
                     </tr>
                     {% endfor %}

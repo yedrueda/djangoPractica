@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 import dj_database_url
 
@@ -44,6 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third-party apps (SIGE-CDI-API)
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'drf_spectacular',
+    # Local apps
     'gestion_cdi',
 ]
 
@@ -143,3 +149,49 @@ STORAGES = {
 LOGIN_URL = 'login'  # Redirige a esta URL si el usuario no está autenticado
 LOGIN_REDIRECT_URL = 'inicio'  # Redirige a esta URL después de iniciar
 LOGOUT_REDIRECT_URL = 'login'
+
+# ==========================================
+# CONFIGURACIÓN DE SIGE-CDI-API (DRF, JWT, OpenAPI/Swagger)
+# ==========================================
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 25,
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SIGE-CDI-API | CDI "El Llanito"',
+    'DESCRIPTION': (
+        'API RESTful para el Sistema Integral de Gestión del Centro de Diagnóstico Integral (CDI) "El Llanito" '
+        '(ASIC El Llanito - Municipio Sucre). Incluye control administrativo de personal y guardias, '
+        'padrón de pacientes, cola de turnos, los 4 programas de salud (Endocrino-Metabólico, Salud Respiratoria, '
+        'Ruta Materna, Educación Sexual / Planificación Familiar), control de inventario tecnológico, '
+        'estadísticas poblacionales y sincronización diferida Offline-First.'
+    ),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'ENUM_NAME_OVERRIDES': {
+        'PasEnum': [('Primera', 'Primera'), ('Sucesiva', 'Sucesiva')],
+        'PasCaptacionEnum': [('Primera', 'Captación / Primera Vez'), ('Sucesiva', 'Control Sucesivo')],
+        'PasPrimeraSucesivaEnum': [('Primera', 'Primera Vez'), ('Sucesiva', 'Sucesiva')],
+        'ProcedimientoAnticonceptivoEnum': 'gestion_cdi.models.PlanificacionFamiliar.OPCIONES_PROCEDIMIENTO',
+        'SerologiaEstatusEnum': 'gestion_cdi.models.RutaMaterna.SEROLOGIA_ESTATUS',
+    },
+}
+

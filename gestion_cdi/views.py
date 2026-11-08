@@ -1,15 +1,16 @@
 from datetime import date
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Q, Sum # Para búsquedas avanzadas y sumas
 from .models import (
-    Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, 
+    Paciente, PersonalCDI, InventarioEquipo, ControlEndocrino, ControlRespiratorio,
     RutaMaterna, PlanificacionFamiliar, TurnoGuardia, 
     Comuna, SectorCPT, IndicadorPoblacionalASIC
 )
 from .forms import (
     PacienteForm, PersonalCDIForm, InventarioEquipoForm, 
-    ControlEndocrinoForm, RutaMaternaForm, PlanificacionFamiliarForm, TurnoGuardiaForm,
+    ControlEndocrinoForm, ControlRespiratorioForm, RutaMaternaForm, PlanificacionFamiliarForm, TurnoGuardiaForm,
     SectorCPTForm, IndicadorPoblacionalForm
 )
 
@@ -19,7 +20,12 @@ def inicio(request):
     total_pacientes = Paciente.objects.count()
     total_personal = PersonalCDI.objects.count()
     total_equipos = InventarioEquipo.objects.count()
-    total_consultas = ControlEndocrino.objects.count() 
+    total_consultas = (
+        ControlEndocrino.objects.count() +
+        ControlRespiratorio.objects.count() +
+        RutaMaterna.objects.count() +
+        PlanificacionFamiliar.objects.count()
+    )
     guardias_hoy = TurnoGuardia.objects.filter(fecha=hoy).select_related('personal')
     total_guardias_hoy = guardias_hoy.count()
 
@@ -34,11 +40,55 @@ def inicio(request):
     }
     return render(request, 'gestion_cdi/inicio.html', contexto)
 
-# Vista para listar pacientes
+# Vista para listar pacientes con búsqueda avanzada, filtros y paginación
 @login_required
 def lista_pacientes(request):
-    pacientes = Paciente.objects.all().order_by('-fecha_registro')  # Ordenamos por fecha de registro, el más reciente primero
-    return render(request, 'gestion_cdi/lista_pacientes.html', {'pacientes': pacientes})
+    busqueda = request.GET.get('buscar', '').strip()
+    sexo_filtro = request.GET.get('sexo', '').strip()
+    comuna_filtro = request.GET.get('comuna', '').strip()
+    condicion_filtro = request.GET.get('condicion', '').strip()
+
+    pacientes_qs = Paciente.objects.select_related('comuna', 'sector_cpt').all().order_by('-fecha_registro')
+
+    if busqueda:
+        for termino in busqueda.split():
+            pacientes_qs = pacientes_qs.filter(
+                Q(cedula__icontains=termino) |
+                Q(nombre__icontains=termino) |
+                Q(apellido__icontains=termino) |
+                Q(telefono__icontains=termino) |
+                Q(direccion__icontains=termino) |
+                Q(sector_cpt__nombre__icontains=termino)
+            )
+
+    if sexo_filtro:
+        pacientes_qs = pacientes_qs.filter(sexo=sexo_filtro)
+    if comuna_filtro:
+        pacientes_qs = pacientes_qs.filter(comuna_id=comuna_filtro)
+    if condicion_filtro == 'gestante':
+        pacientes_qs = pacientes_qs.filter(gestante=True)
+    elif condicion_filtro == 'discapacidad':
+        pacientes_qs = pacientes_qs.filter(posee_discapacidad=True)
+    elif condicion_filtro == 'adulto_mayor':
+        hoy = date.today()
+        fecha_corte = date(hoy.year - 60, hoy.month, hoy.day)
+        pacientes_qs = pacientes_qs.filter(fecha_nacimiento__lte=fecha_corte)
+
+    total_resultados = pacientes_qs.count()
+    paginator = Paginator(pacientes_qs, 20)
+    page_number = request.GET.get('page')
+    pacientes_page = paginator.get_page(page_number)
+
+    contexto = {
+        'pacientes': pacientes_page,
+        'total_resultados': total_resultados,
+        'busqueda': busqueda,
+        'sexo_filtro': sexo_filtro,
+        'comuna_filtro': comuna_filtro,
+        'condicion_filtro': condicion_filtro,
+        'comunas': Comuna.objects.all(),
+    }
+    return render(request, 'gestion_cdi/lista_pacientes.html', contexto)
 
 # Vista para agregar un nuevo paciente
 @login_required
@@ -203,10 +253,10 @@ def crear_control_endocrino(request):
             consulta.save()
             return redirect('lista_consultas') 
     else:
-        # Cuando entras por primera vez (GET), se ejecuta esto:
-        form = ControlEndocrinoForm()
+        paciente_cedula = request.GET.get('paciente')
+        initial = {'paciente': paciente_cedula} if paciente_cedula else None
+        form = ControlEndocrinoForm(initial=initial)
     
-    # Confirma que la ruta del archivo HTML aquí esté bien escrita:
     return render(request, 'gestion_cdi/crear_control_endocrino.html', {'form': form})
 
 # 1. VER DETALLES (LA HOJA MÉDICA)
@@ -238,6 +288,48 @@ def eliminar_control_endocrino(request, pk):
     consulta.delete()
     return redirect('lista_consultas')
 
+# ==========================================
+# PROGRAMA 2: SALUD RESPIRATORIA
+# ==========================================
+@login_required
+def crear_control_respiratorio(request):
+    if request.method == 'POST':
+        form = ControlRespiratorioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_consultas')
+    else:
+        paciente_cedula = request.GET.get('paciente')
+        initial = {'paciente': paciente_cedula} if paciente_cedula else None
+        form = ControlRespiratorioForm(initial=initial)
+    return render(request, 'gestion_cdi/crear_control_respiratorio.html', {'form': form})
+
+@login_required
+def detalle_control_respiratorio(request, pk):
+    consulta = get_object_or_404(ControlRespiratorio, pk=pk)
+    return render(request, 'gestion_cdi/detalle_control_respiratorio.html', {'consulta': consulta})
+
+@login_required
+def editar_control_respiratorio(request, pk):
+    consulta = get_object_or_404(ControlRespiratorio, pk=pk)
+    if request.method == 'POST':
+        form = ControlRespiratorioForm(request.POST, instance=consulta)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_consultas')
+    else:
+        form = ControlRespiratorioForm(instance=consulta)
+    return render(request, 'gestion_cdi/crear_control_respiratorio.html', {'form': form, 'editando': True})
+
+@login_required
+def eliminar_control_respiratorio(request, pk):
+    consulta = get_object_or_404(ControlRespiratorio, pk=pk)
+    consulta.delete()
+    return redirect('lista_consultas')
+
+# ==========================================
+# PROGRAMA 3: RUTA MATERNA
+# ==========================================
 @login_required
 def crear_ruta_materna(request):
     """Vista para el formulario de Ruta Materna"""
@@ -247,9 +339,37 @@ def crear_ruta_materna(request):
             form.save()
             return redirect('lista_consultas')
     else:
-        form = RutaMaternaForm()
+        paciente_cedula = request.GET.get('paciente')
+        initial = {'paciente': paciente_cedula} if paciente_cedula else None
+        form = RutaMaternaForm(initial=initial)
     return render(request, 'gestion_cdi/crear_ruta_materna.html', {'form': form})
 
+@login_required
+def detalle_ruta_materna(request, pk):
+    consulta = get_object_or_404(RutaMaterna, pk=pk)
+    return render(request, 'gestion_cdi/detalle_ruta_materna.html', {'consulta': consulta})
+
+@login_required
+def editar_ruta_materna(request, pk):
+    consulta = get_object_or_404(RutaMaterna, pk=pk)
+    if request.method == 'POST':
+        form = RutaMaternaForm(request.POST, instance=consulta)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_consultas')
+    else:
+        form = RutaMaternaForm(instance=consulta)
+    return render(request, 'gestion_cdi/crear_ruta_materna.html', {'form': form, 'editando': True})
+
+@login_required
+def eliminar_ruta_materna(request, pk):
+    consulta = get_object_or_404(RutaMaterna, pk=pk)
+    consulta.delete()
+    return redirect('lista_consultas')
+
+# ==========================================
+# PROGRAMA 4: EDUCACIÓN SEXUAL Y PLANIFICACIÓN FAMILIAR
+# ==========================================
 @login_required
 def crear_planificacion_familiar(request):
     """Vista para el formulario de Planificación Familiar"""
@@ -259,29 +379,123 @@ def crear_planificacion_familiar(request):
             form.save()
             return redirect('lista_consultas')
     else:
-        form = PlanificacionFamiliarForm()
+        paciente_cedula = request.GET.get('paciente')
+        initial = {'paciente': paciente_cedula} if paciente_cedula else None
+        form = PlanificacionFamiliarForm(initial=initial)
     return render(request, 'gestion_cdi/crear_planificacion_familiar.html', {'form': form})
 
 @login_required
+def detalle_planificacion_familiar(request, pk):
+    consulta = get_object_or_404(PlanificacionFamiliar, pk=pk)
+    return render(request, 'gestion_cdi/detalle_planificacion_familiar.html', {'consulta': consulta})
+
+@login_required
+def editar_planificacion_familiar(request, pk):
+    consulta = get_object_or_404(PlanificacionFamiliar, pk=pk)
+    if request.method == 'POST':
+        form = PlanificacionFamiliarForm(request.POST, instance=consulta)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_consultas')
+    else:
+        form = PlanificacionFamiliarForm(instance=consulta)
+    return render(request, 'gestion_cdi/crear_planificacion_familiar.html', {'form': form, 'editando': True})
+
+@login_required
+def eliminar_planificacion_familiar(request, pk):
+    consulta = get_object_or_404(PlanificacionFamiliar, pk=pk)
+    consulta.delete()
+    return redirect('lista_consultas')
+
+@login_required
 def lista_consultas(request):
-    # 1. Capturamos el parámetro 'buscar' enviado desde el formulario HTML
-    busqueda = request.GET.get('buscar', '')
-    
-    # 2. Obtenemos todas las consultas ordenadas de la más reciente a la más antigua
-    consultas = ControlEndocrino.objects.all().order_by('-fecha_atencion')
-    
-    # 3. Si el usuario escribió algo, filtramos por Cédula, Nombre o Apellido del paciente
-    if busqueda:
-        consultas = consultas.filter(
-            Q(paciente__cedula__icontains=busqueda) |
-            Q(paciente__nombre__icontains=busqueda) |
-            Q(paciente__apellido__icontains=busqueda)
-        )
-    
-    # 4. Pasamos las consultas filtradas y el término de búsqueda actual a la plantilla
+    busqueda = request.GET.get('buscar', '').strip()
+    programa_filtro = request.GET.get('programa', '').strip()
+
+    def filtrar_por_paciente(qs):
+        if not busqueda:
+            return qs
+        for termino in busqueda.split():
+            qs = qs.filter(
+                Q(paciente__cedula__icontains=termino) |
+                Q(paciente__nombre__icontains=termino) |
+                Q(paciente__apellido__icontains=termino)
+            )
+        return qs
+
+    registros = []
+
+    if programa_filtro in ('', 'endocrino'):
+        for c in filtrar_por_paciente(ControlEndocrino.objects.select_related('paciente').all()):
+            registros.append({
+                'id': c.id,
+                'fecha': c.fecha_atencion,
+                'paciente': c.paciente,
+                'programa_nombre': 'Endocrino-Metabólico',
+                'programa_badge': 'bg-primary text-primary',
+                'signo_1': f"T.A: {c.tension_arterial or '--'} mmHg",
+                'signo_2': f"Glicemia: {c.glucemia_ayunas or '--'} mg/dL | IMC: {c.imc or '--'}",
+                'diagnostico': c.diagnostico or 'Sin diagnóstico registrado',
+                'url_detalle': 'detalle_control_endocrino',
+                'url_editar': 'editar_control_endocrino',
+                'url_eliminar': 'eliminar_control_endocrino',
+            })
+
+    if programa_filtro in ('', 'respiratorio'):
+        for c in filtrar_por_paciente(ControlRespiratorio.objects.select_related('paciente').all()):
+            registros.append({
+                'id': c.id,
+                'fecha': c.fecha_atencion,
+                'paciente': c.paciente,
+                'programa_nombre': 'Salud Respiratoria',
+                'programa_badge': 'bg-info text-info',
+                'signo_1': f"SpO2: {c.saturacion_oxigeno or '--'}% | F.R: {c.frecuencia_respiratoria or '--'} rpm",
+                'signo_2': f"Severidad: {c.severidad_cuadro}",
+                'diagnostico': c.diagnostico or 'Sin diagnóstico registrado',
+                'url_detalle': 'detalle_control_respiratorio',
+                'url_editar': 'editar_control_respiratorio',
+                'url_eliminar': 'eliminar_control_respiratorio',
+            })
+
+    if programa_filtro in ('', 'materna'):
+        for c in filtrar_por_paciente(RutaMaterna.objects.select_related('paciente').all()):
+            registros.append({
+                'id': c.id,
+                'fecha': c.fecha_control,
+                'paciente': c.paciente,
+                'programa_nombre': 'Ruta Materna',
+                'programa_badge': 'bg-danger text-danger',
+                'signo_1': f"Gestación: {c.semanas_embarazo} sem ({c.formula_obstetrica})",
+                'signo_2': f"FCF: {c.frecuencia_cardiaca_fetal or '--'} lpm | {c.riesgo_obstetrico}",
+                'diagnostico': c.diagnostico or c.observaciones or 'Control prenatal registrado',
+                'url_detalle': 'detalle_ruta_materna',
+                'url_editar': 'editar_ruta_materna',
+                'url_eliminar': 'eliminar_ruta_materna',
+            })
+
+    if programa_filtro in ('', 'planificacion'):
+        for c in filtrar_por_paciente(PlanificacionFamiliar.objects.select_related('paciente').all()):
+            registros.append({
+                'id': c.id,
+                'fecha': c.fecha_atencion,
+                'paciente': c.paciente,
+                'programa_nombre': 'Educación Sexual',
+                'programa_badge': 'bg-success text-success',
+                'signo_1': f"Método: {c.tipo_metodo}",
+                'signo_2': f"Preservativos: {c.preservativo_masculino} | T.A: {c.tension_arterial or '--'}",
+                'diagnostico': c.diagnostico or c.observaciones or 'Orientación en salud sexual',
+                'url_detalle': 'detalle_planificacion_familiar',
+                'url_editar': 'editar_planificacion_familiar',
+                'url_eliminar': 'eliminar_planificacion_familiar',
+            })
+
+    registros.sort(key=lambda item: item['fecha'], reverse=True)
+
     return render(request, 'gestion_cdi/lista_consultas.html', {
-        'consultas': consultas,
-        'busqueda': busqueda
+        'consultas': ControlEndocrino.objects.select_related('paciente').all().order_by('-fecha_atencion'),
+        'registros_unificados': registros,
+        'busqueda': busqueda,
+        'programa_filtro': programa_filtro,
     })
 
 # ==========================================

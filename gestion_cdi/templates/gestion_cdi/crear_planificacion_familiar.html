@@ -1,0 +1,151 @@
+{% extends 'gestion_cdi/base.html' %}
+{% block titulo %}Educación Sexual y Planificación Familiar - SIGE{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-0 text-dark fw-bold">Educación Sexual y Planificación Familiar</h3>
+        <p class="text-muted small mb-0">Consejería en salud sexual y reproductiva, entrega de anticonceptivos y prevención de ITS</p>
+    </div>
+    <a href="{% url 'lista_consultas' %}" class="btn btn-light border shadow-sm text-muted">
+        <i class="fa-solid fa-arrow-left me-2"></i>Volver al Historial
+    </a>
+</div>
+
+<div class="card shadow-sm border-0 max-width-900 mx-auto">
+    <div class="card-body p-4 p-md-5">
+        <form method="post">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Verifique los campos del formulario:</strong>
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
+            <!-- 1. IDENTIFICACIÓN Y CONTROL OPERATIVO -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2 text-success">
+                <i class="fa-solid fa-hand-holding-medical me-2"></i> 1. Identificación y Control Operativo Regional
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-5">
+                    {{ form.paciente.label_tag }}
+                    {{ form.paciente }}
+                    <div id="resumen_clinico_paciente" class="mt-2 p-2 rounded border bg-light small d-none"></div>
+                </div>
+                <div class="col-md-4">{{ form.atendido_por.label_tag }} {{ form.atendido_por }}</div>
+                <div class="col-md-3">{{ form.primera_sucesiva.label_tag }} {{ form.primera_sucesiva }}</div>
+                <div class="col-md-4">{{ form.semana.label_tag }} {{ form.semana }}</div>
+                <div class="col-md-4">{{ form.establecimiento_salud.label_tag }} {{ form.establecimiento_salud }}</div>
+                <div class="col-md-4">{{ form.municipio.label_tag }} {{ form.municipio }}</div>
+            </div>
+
+            <!-- 2. VALORACIÓN CLÍNICA Y GINECO-REPRODUCTIVA -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2 text-success">
+                <i class="fa-solid fa-stethoscope me-2"></i> 2. Valoración Clínica y Elegibilidad Anticonceptiva
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">{{ form.tension_arterial.label_tag }} {{ form.tension_arterial }}</div>
+                <div class="col-md-3">{{ form.peso_kg.label_tag }} {{ form.peso_kg }}</div>
+                <div class="col-md-3">{{ form.fum.label_tag }} {{ form.fum }}</div>
+                <div class="col-md-3">{{ form.prueba_embarazo.label_tag }} {{ form.prueba_embarazo }}</div>
+            </div>
+
+            <!-- 3. DISPENSACIÓN DE MÉTODOS ANTICONCEPTIVOS Y DE BARRERA -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2 text-success">
+                <i class="fa-solid fa-pills me-2"></i> 3. Métodos Anticonceptivos y de Barrera Entregados
+            </h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">{{ form.tipo_metodo.label_tag }} {{ form.tipo_metodo }}</div>
+                <div class="col-md-6">{{ form.metodo_entregado.label_tag }} {{ form.metodo_entregado }}</div>
+
+                <div class="col-md-3">{{ form.preservativo_masculino.label_tag }} {{ form.preservativo_masculino }}</div>
+                <div class="col-md-3">{{ form.preservativo_femenino.label_tag }} {{ form.preservativo_femenino }}</div>
+                <div class="col-md-3">{{ form.blister_orales_entregados.label_tag }} {{ form.blister_orales_entregados }}</div>
+                <div class="col-md-3">{{ form.ampollas_inyectables.label_tag }} {{ form.ampollas_inyectables }}</div>
+
+                <div class="col-md-6">{{ form.diu.label_tag }} {{ form.diu }}</div>
+                <div class="col-md-6">{{ form.implante.label_tag }} {{ form.implante }}</div>
+            </div>
+
+            <!-- 4. EDUCACIÓN SEXUAL Y PESQUISA GINECOLÓGICA -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2 text-success">
+                <i class="fa-solid fa-shield-heart me-2"></i> 4. Consejería en Salud Sexual, Prevención de ITS y Pesquisa
+            </h6>
+            <div class="row g-3 mb-4 bg-light p-3 rounded border mx-0">
+                {% for field in form %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="col-md-6 mb-2">
+                            <div class="form-check form-switch fs-6">
+                                {{ field }} <label class="form-check-label fw-bold mt-1 ms-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- 5. HISTORIAL Y SEGUIMIENTO -->
+            <h6 class="fw-bold text-uppercase mb-3 border-bottom pb-2 text-success">
+                <i class="fa-solid fa-notes-medical me-2"></i> 5. Antecedentes, Diagnóstico y Próximo Control
+            </h6>
+            <div class="row g-3">
+                <div class="col-md-6">{{ form.antecedente_obstetrico.label_tag }} {{ form.antecedente_obstetrico }}</div>
+                <div class="col-md-6">{{ form.diagnostico.label_tag }} {{ form.diagnostico }}</div>
+                <div class="col-md-8">{{ form.observaciones.label_tag }} {{ form.observaciones }}</div>
+                <div class="col-md-4">{{ form.proxima_cita.label_tag }} {{ form.proxima_cita }}</div>
+            </div>
+
+            <div class="mt-5 text-end">
+                <button type="submit" class="btn btn-success px-5 fw-bold shadow-sm">
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Registro de Planificación Familiar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectPaciente = document.getElementById('id_paciente');
+        const bannerPaciente = document.getElementById('resumen_clinico_paciente');
+        if (selectPaciente && typeof TomSelect !== 'undefined') {
+            new TomSelect(selectPaciente, {
+                create: false,
+                placeholder: 'Escriba cédula, nombre o apellido del/la paciente...',
+                valueField: 'value',
+                labelField: 'text',
+                searchField: ['text'],
+                loadThrottle: 250,
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+                    fetch('/api/v1/pacientes/autocompletar/?q=' + encodeURIComponent(query), {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(json => callback((json.resultados || []).map(item => ({ value: String(item.cedula), text: item.texto_busqueda }))))
+                    .catch(() => callback());
+                },
+                onChange: function(value) {
+                    if (!value || !bannerPaciente) return;
+                    fetch('/api/v1/pacientes/autocompletar/?q=' + encodeURIComponent(value), {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(json => {
+                        const info = (json.resultados || []).find(p => String(p.cedula) === String(value));
+                        if (info) {
+                            bannerPaciente.classList.remove('d-none');
+                            bannerPaciente.innerHTML =
+                                '<strong>' + info.nombre_completo + '</strong> (' + info.edad + ') · ' +
+                                '<span class="text-danger fw-bold">Alergias:</span> ' + info.alergias;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+

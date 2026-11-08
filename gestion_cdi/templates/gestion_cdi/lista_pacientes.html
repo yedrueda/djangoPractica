@@ -5,11 +5,59 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h3 class="mb-0 text-dark fw-bold">Directorio de Pacientes</h3>
-        <p class="text-muted small mb-0">Gestión y control de historias clínicas</p>
+        <p class="text-muted small mb-0">
+            Gestión y control de historias clínicas
+            {% if total_resultados is not None %}
+                · <strong>{{ total_resultados }}</strong> paciente(s) encontrado(s)
+            {% endif %}
+        </p>
     </div>
     <a href="{% url 'crear_paciente' %}" class="btn btn-primary btn-sm px-3 shadow-sm" style="background-color: var(--accent-blue); border: none;">
         <i class="fa-solid fa-plus me-2"></i>Nuevo Paciente
     </a>
+</div>
+
+<!-- BARRA DE BÚSQUEDA AVANZADA Y FILTROS RÁPIDOS -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body p-3">
+        <form method="get" action="{% url 'lista_pacientes' %}" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" name="buscar" value="{{ busqueda }}" class="form-control" placeholder="Buscar por Cédula, Nombre, Apellido, Teléfono o Sector...">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <select name="sexo" class="form-select form-select-sm">
+                    <option value="">Sexo: Todos</option>
+                    <option value="F" {% if sexo_filtro == 'F' %}selected{% endif %}>Femenino (F)</option>
+                    <option value="M" {% if sexo_filtro == 'M' %}selected{% endif %}>Masculino (M)</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="comuna" class="form-select form-select-sm">
+                    <option value="">Comuna: Todas</option>
+                    {% for c in comunas %}
+                        <option value="{{ c.id }}" {% if comuna_filtro == c.id|stringformat:"s" %}selected{% endif %}>{{ c.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <select name="condicion" class="form-select form-select-sm">
+                    <option value="">Condición: Todas</option>
+                    <option value="adulto_mayor" {% if condicion_filtro == 'adulto_mayor' %}selected{% endif %}>Adulto Mayor (≥60)</option>
+                    <option value="gestante" {% if condicion_filtro == 'gestante' %}selected{% endif %}>Gestantes</option>
+                    <option value="discapacidad" {% if condicion_filtro == 'discapacidad' %}selected{% endif %}>Con Discapacidad</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary px-3 fw-bold" style="background-color: var(--accent-blue); border: none;">Filtrar</button>
+                {% if busqueda or sexo_filtro or comuna_filtro or condicion_filtro %}
+                    <a href="{% url 'lista_pacientes' %}" class="btn btn-sm btn-light border text-muted" title="Limpiar filtros">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
 </div>
 
 <div class="card shadow-sm border-0">
@@ -21,8 +69,9 @@
                     <tr>
                         <th class="ps-4 py-3 font-weight-normal border-0 text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Documento</th>
                         <th class="py-3 font-weight-normal border-0 text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Paciente</th>
-                        <th class="py-3 font-weight-normal border-0 text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Edad</th>
-                        <th class="py-3 font-weight-normal border-0 text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Teléfono</th>
+                        <th class="py-3 font-weight-normal border-0 text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Edad / Triaje</th>
+                        <th class="py-3 font-weight-normal border-0 text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Perfil Clínico</th>
+                        <th class="py-3 font-weight-normal border-0 text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Contacto / Ubicación</th>
                         <th class="text-end pe-4 py-3 font-weight-normal border-0 text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Acciones</th>
                     </tr>
                 </thead>
@@ -42,7 +91,7 @@
                                 </div>
                                 <div>
                                     <span class="fw-bold text-dark d-block">{{ paciente.nombre }} {{ paciente.apellido }}</span>
-                                    <span class="text-muted small">{{ paciente.sexo|default:"No especificado" }}</span>
+                                    <span class="text-muted small">{{ paciente.get_sexo_display }} · {{ paciente.estado_civil }}</span>
                                 </div>
                             </div>
                         </td>
@@ -57,13 +106,37 @@
                                     {{ paciente.edad }}
                                 </span>
                             {% endif %}
+                            {% if paciente.prioridad_sugerida_triaje == "Prioritario" %}
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle ms-1 px-2 py-1 rounded-pill" title="Prioridad en Cola de Turnos">
+                                    <i class="fa-solid fa-star-of-life me-1"></i>Prioritario
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-nowrap">
+                            <span class="badge bg-light text-dark border me-1">
+                                <i class="fa-solid fa-droplet text-danger me-1"></i>{{ paciente.grupo_sanguineo }}
+                            </span>
+                            {% if paciente.gestante %}
+                                <span class="badge bg-info bg-opacity-25 text-dark border border-info-subtle">Gestante</span>
+                            {% endif %}
+                            {% if paciente.posee_discapacidad %}
+                                <span class="badge bg-warning bg-opacity-25 text-dark border border-warning-subtle" title="{{ paciente.detalle_discapacidad }}">Discapacidad</span>
+                            {% endif %}
                         </td>
                         
                         <td class="text-nowrap text-muted">
-                            <i class="fa-solid fa-phone small me-2" style="color: #cbd5e1;"></i>{{ paciente.telefono|default:"No registrado" }}
+                            <div><i class="fa-solid fa-phone small me-2" style="color: #cbd5e1;"></i>{{ paciente.telefono|default:"No registrado" }}</div>
+                            <small class="text-muted">
+                                <i class="fa-solid fa-location-dot me-1"></i>
+                                {% if paciente.sector_cpt %}{{ paciente.sector_cpt.nombre }}{% else %}{{ paciente.asic }}{% endif %}
+                            </small>
                         </td>
                         
                         <td class="text-end pe-4 text-nowrap">
+                            <a href="{% url 'crear_control_endocrino' %}?paciente={{ paciente.cedula }}" class="btn btn-sm btn-light border shadow-sm text-success me-1" title="Nueva Evaluación Endocrino-Metabólica">
+                                <i class="fa-solid fa-stethoscope"></i>
+                            </a>
                             <a href="{% url 'editar_paciente' paciente.cedula %}" class="btn btn-sm btn-light border shadow-sm text-primary me-1" title="Editar">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
@@ -75,10 +148,10 @@
                     
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-5">
+                        <td colspan="6" class="text-center text-muted py-5">
                             <i class="fa-solid fa-folder-open fa-3x mb-3" style="color: #cbd5e1;"></i><br>
-                            <h6 class="fw-bold text-dark mb-1">Directorio Vacío</h6>
-                            <p class="small">No hay pacientes registrados en el sistema actualmente.</p>
+                            <h6 class="fw-bold text-dark mb-1">Sin resultados</h6>
+                            <p class="small">No se encontraron pacientes con los criterios de búsqueda actuales.</p>
                         </td>
                     </tr>
                     {% endfor %}
@@ -86,5 +159,26 @@
             </table>
         </div>
     </div>
+    {% if pacientes.has_other_pages %}
+    <div class="card-footer bg-white py-3 d-flex justify-content-between align-items-center">
+        <span class="small text-muted">
+            Página <strong>{{ pacientes.number }}</strong> de <strong>{{ pacientes.paginator.num_pages }}</strong>
+        </span>
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                {% if pacientes.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ pacientes.previous_page_number }}&buscar={{ busqueda }}&sexo={{ sexo_filtro }}&comuna={{ comuna_filtro }}&condicion={{ condicion_filtro }}">Anterior</a>
+                    </li>
+                {% endif %}
+                {% if pacientes.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ pacientes.next_page_number }}&buscar={{ busqueda }}&sexo={{ sexo_filtro }}&comuna={{ comuna_filtro }}&condicion={{ condicion_filtro }}">Siguiente</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -27,21 +27,29 @@
         </div>
 
         <h6 class="fw-bold text-uppercase mb-3 text-secondary" style="letter-spacing: 0.5px;">
-            <i class="fa-solid fa-id-card me-2 text-primary"></i> 1. Información del Paciente
+            <i class="fa-solid fa-id-card me-2 text-primary"></i> 1. Información del Paciente y Estratificación CAREMT
         </h6>
         <div class="row g-3 bg-light p-3 rounded border mb-4">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <span class="text-muted small d-block">Nombre Completo:</span>
                 <strong class="text-dark fs-5">{{ consulta.paciente.nombre }} {{ consulta.paciente.apellido }}</strong>
+                <span class="d-block small text-muted">{{ consulta.paciente.edad }} | Grupo: {{ consulta.paciente.grupo_sanguineo }}</span>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <span class="text-muted small d-block">Documento de Identidad:</span>
                 <strong class="text-dark fs-5">C.I: {{ consulta.paciente.tipo_cedula }}-{{ consulta.paciente.cedula }}</strong>
+                <span class="d-block small text-muted">Consulta: {{ consulta.pas }} (Sem. Epid. {{ consulta.semana_epidemiologica|default:"--" }})</span>
+            </div>
+            <div class="col-md-4">
+                <span class="text-muted small d-block">Estratificación Metabólica:</span>
+                <span class="badge bg-primary">{{ consulta.get_tipo_diabetes_display }}</span>
+                <span class="badge bg-danger ms-1">Riesgo CV: {{ consulta.riesgo_cardiovascular }}</span>
+                <span class="d-block small text-muted mt-1">Pie Diabético: {{ consulta.clasificacion_pie_diabetico }}</span>
             </div>
         </div>
 
         <h6 class="fw-bold text-uppercase mb-3 text-secondary" style="letter-spacing: 0.5px;">
-            <i class="fa-solid fa-heart-pulse me-2 text-danger"></i> 2. Constantes Vitales y Antropometría
+            <i class="fa-solid fa-heart-pulse me-2 text-danger"></i> 2. Constantes Vitales, Antropometría y Perfil Glucémico
         </h6>
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-3">
@@ -52,56 +60,79 @@
             </div>
             <div class="col-6 col-md-3">
                 <div class="p-3 border rounded text-center bg-white">
-                    <span class="text-muted small d-block text-truncate">Fr. Cardíaca</span>
-                    <span class="fw-bold text-dark fs-5">{{ consulta.frecuencia_cardiaca|default:"--" }}</span> <span class="text-muted small">lpm</span>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="p-3 border rounded text-center bg-white">
-                    <span class="text-muted small d-block text-truncate">Fr. Respiratoria</span>
+                    <span class="text-muted small d-block text-truncate">Fr. Cardíaca / Resp.</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.frecuencia_cardiaca|default:"--" }}</span> <span class="text-muted small">lpm</span> /
                     <span class="fw-bold text-dark fs-5">{{ consulta.frecuencia_respiratoria|default:"--" }}</span> <span class="text-muted small">rpm</span>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="p-3 border rounded text-center bg-white">
-                    <span class="text-muted small d-block text-truncate">Temperatura</span>
-                    <span class="fw-bold text-dark fs-5">{{ consulta.temperatura|default:"--" }}</span> <span class="text-muted small">°C</span>
-                </div>
-            </div>
-            <div class="col-6 col-md-4">
-                <div class="p-3 border rounded text-center bg-white">
-                    <span class="text-muted small d-block text-truncate">Peso Corporal</span>
-                    <span class="fw-bold text-dark fs-5">{{ consulta.peso_kg|default:"--" }}</span> <span class="text-muted small">Kg</span>
-                </div>
-            </div>
-            <div class="col-6 col-md-4">
-                <div class="p-3 border rounded text-center bg-white">
-                    <span class="text-muted small d-block text-truncate">Talla / Estatura</span>
+                    <span class="text-muted small d-block text-truncate">Peso / Talla</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.peso_kg|default:"--" }}</span> <span class="text-muted small">Kg</span> |
                     <span class="fw-bold text-dark fs-5">{{ consulta.talla_cm|default:"--" }}</span> <span class="text-muted small">cm</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">IMC y Cintura</span>
+                    <span class="fw-bold text-primary fs-5">{{ consulta.imc|default:"--" }}</span> <span class="text-muted small">kg/m²</span>
+                    <small class="d-block text-muted">{{ consulta.clasificacion_imc }} | C.A: {{ consulta.circunferencia_abdominal_cm|default:"--" }} cm</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">Glicemia Ayunas / Postprandial</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.glucemia_ayunas|default:"--" }}</span> /
+                    <span class="fw-bold text-dark fs-5">{{ consulta.glucemia_postprandial|default:"--" }}</span> <span class="text-muted small">mg/dL</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="p-3 border rounded text-center bg-white">
+                    <span class="text-muted small d-block text-truncate">HbA1c y Control Glucémico</span>
+                    <span class="fw-bold text-dark fs-5">{{ consulta.hba1c|default:"--" }}%</span>
+                    <small class="d-block text-muted">{{ consulta.estado_control_glucemico }}</small>
                 </div>
             </div>
             <div class="col-12 col-md-4">
                 <div class="p-3 border rounded text-center bg-white">
-                    <span class="text-muted small d-block text-truncate">Glicemia en Ayunas</span>
-                    <span class="fw-bold text-dark fs-5">{{ consulta.glucemia_ayunas|default:"--" }}</span> <span class="text-muted small">mg/dL</span>
+                    <span class="text-muted small d-block text-truncate">Función Renal y Tiroidea</span>
+                    <small class="d-block text-dark">Creat: <strong>{{ consulta.creatinina|default:"--" }}</strong> | Urea: <strong>{{ consulta.urea|default:"--" }}</strong> mg/dL</small>
+                    <small class="d-block text-dark">TSH: <strong>{{ consulta.tsh|default:"--" }}</strong> µUI/mL | T4L: <strong>{{ consulta.t4_libre|default:"--" }}</strong></small>
                 </div>
             </div>
         </div>
 
         <h6 class="fw-bold text-uppercase mb-3 text-secondary" style="letter-spacing: 0.5px;">
-            <i class="fa-solid fa-notes-medical me-2 text-info"></i> 3. Criterio Médico y Diagnóstico
+            <i class="fa-solid fa-notes-medical me-2 text-info"></i> 3. Criterio Médico, Dispensación y Seguimiento
         </h6>
         <div class="row g-3 mb-4">
             <div class="col-12">
                 <div class="p-3 border rounded bg-white">
-                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Diagnóstico Médico Preliminar:</span>
+                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Diagnóstico Clínico Integral:</span>
                     <p class="mb-0 text-dark text-justify" style="white-space: pre-line;">{{ consulta.diagnostico|default:"No se registraron detalles diagnósticos." }}</p>
                 </div>
             </div>
             <div class="col-12">
                 <div class="p-3 border rounded bg-white">
-                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Indicaciones Terapéuticas y Tratamiento:</span>
+                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Plan Terapéutico y Esquema de Insulina:</span>
+                    {% if consulta.esquema_insulina %}
+                        <p class="mb-1 text-primary fw-bold"><i class="fa-solid fa-syringe me-1"></i> {{ consulta.esquema_insulina }}</p>
+                    {% endif %}
                     <p class="mb-0 text-dark text-justify" style="white-space: pre-line;">{{ consulta.tratamiento|default:"No se registraron indicaciones de tratamiento." }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded bg-white h-100">
+                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Medicamentos e Insumos Dispensados:</span>
+                    <p class="mb-1 text-dark">{{ consulta.medicamentos_entregados|default:"Ninguno reportado" }}</p>
+                    <small class="text-muted">Tiras reactivas entregadas: <strong>{{ consulta.tiras_reactivas_entregadas }}</strong></small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded bg-white h-100">
+                    <span class="text-muted small fw-bold d-block mb-1 text-uppercase">Referencia y Próxima Cita:</span>
+                    <p class="mb-1 text-dark">Referencia: {{ consulta.referencia|default:"Sin referencia externa" }}</p>
+                    <small class="text-primary fw-bold">Próximo Control: {{ consulta.proxima_cita|date:"d/m/Y"|default:"Por programar" }}</small>
                 </div>
             </div>
         </div>
